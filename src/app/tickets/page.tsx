@@ -1,4 +1,4 @@
-import { Separator } from "@/components/ui/separator";
+import Heading from "@/components/Heading";
 import TicketItem from "@/features/ticket/TicketItem";
 import type { Ticket } from "@/features/ticket/types";
 
@@ -26,13 +26,7 @@ export const initialTickets: Ticket[] = [
 const TicketsPage = () => {
   return (
     <div className="flex-1 flex flex-col gap-y-8">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">Tickets</h2>
-        <p className="text-sm text-muted-foreground">
-          All your tickets at one place
-        </p>
-      </div>
-      <Separator />
+      <Heading title="Tickets" description="All your tickets at one place" />
       <div className="flex-1 flex flex-col items-center gap-y-4 animate-fade-from-top">
         {initialTickets.map((ticket) => (
           <TicketItem key={ticket.id} ticket={ticket} />
