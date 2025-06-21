@@ -11,8 +11,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-import { TICKET_ICONS } from "./constants";
-import type { Ticket } from "./types";
+import { TICKET_ICONS } from "../constants";
+import type { Ticket } from "../types";
 
 type TicketItemProps = { ticket: Ticket; isDetail?: boolean };
 
@@ -21,12 +21,12 @@ export default function TicketItem({ ticket, isDetail }: TicketItemProps) {
     <div
       className={cn(
         "w-full flex gap-x-1",
-        isDetail ? "max-w-[58px]" : "max-w-[420px]"
+        isDetail ? "max-w-[580px]" : "max-w-[420px]"
       )}
     >
       <Card key={ticket.id} className="w-full">
         <CardHeader>
-          <CardTitle className="flex gap-x-2">
+          <CardTitle className="flex gap-x-2 items-center">
             <span>{TICKET_ICONS[ticket.status]}</span>
             <span className="truncate">{ticket.title}</span>
           </CardTitle>
