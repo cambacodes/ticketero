@@ -1,0 +1,29 @@
+{
+  "editor.detectIndentation": false,
+  "editor.formatOnPaste": false,
+  "editor.formatOnType": false,
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "editor.codeActionsOnSave": [
+    "source.addMissingImports",
+    "source.organizeImports",
+    "source.fixAll.eslint"
+  ],
+  "files.autoSave": "afterDelay",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/CVS": true,
+    "**/node_modules": false
+  },
+  "files.associations": { "*.css": "tailwindcss" },
+  "git.ignoreLimitWarning": true,
+  "[*.{ts,tsx,js,jsx,json,css,scss,md}]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  }
+}
