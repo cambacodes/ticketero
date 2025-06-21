@@ -3,6 +3,10 @@ export interface Ticket {
   title: string;
   content: string;
   status: "OPEN" | "DONE" | "IN_PROGRESS";
+  deadline: Date;
+  bounty: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 type Status = Ticket["status"];
