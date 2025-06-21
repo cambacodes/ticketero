@@ -1,5 +1,6 @@
 import PlaceHolder from "@/components/PlaceHolder";
 import { Button } from "@/components/ui/button";
+import TicketItem from "@/features/ticket/TicketItem";
 import { ticketsPath } from "@/routes";
 import Link from "next/link";
 
@@ -21,9 +22,8 @@ export default function TicketPage({}: TicketPageProps) {
     );
   }
   return (
-    <div>
-      <h2 className="text-lg">Ticket</h2>
-      <p className="text-sm">Content</p>
+    <div className="flex justify-center animate-fade-from-top">
+      <TicketItem ticket={ticket} isDetail />
     </div>
   );
 }
