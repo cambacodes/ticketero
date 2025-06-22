@@ -11,6 +11,7 @@ import { EMPTY_ACTION_STATE } from "@/lib/form/forms";
 import { upsertTicket } from "../actions/upsertTicket";
 import type { Ticket } from "../types";
 import FieldError from "./form/FieldError";
+import Form from "./form/Form";
 import SubmitButton from "./form/SubmitButton";
 
 type TicketUpsertFormProps = {
@@ -33,7 +34,7 @@ export default function TicketUpsertForm({ ticket }: TicketUpsertFormProps) {
   const handleNoop = React.useCallback(() => {}, []);
 
   return (
-    <form action={action} className="flex flex-col gap-y-2">
+    <Form action={action} actionState={actionState}>
       <Label htmlFor="title">Title</Label>
       <Input
         type="text"
@@ -86,7 +87,6 @@ export default function TicketUpsertForm({ ticket }: TicketUpsertFormProps) {
       <FieldError<Ticket> actionState={actionState} name="bounty" />
 
       <SubmitButton label={ticket ? "Edit" : "Create"} />
-      {actionState.message && <p>{actionState.message}</p>}
-    </form>
+    </Form>
   );
 }
