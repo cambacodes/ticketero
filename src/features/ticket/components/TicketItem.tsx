@@ -3,7 +3,7 @@ import { cloneElement } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { ticketPath } from "@/routes";
+import { ticketEditPath, ticketPath } from "@/routes";
 import {
   LucideArrowUpRightFromSquare,
   LucidePencil,
@@ -46,14 +46,20 @@ export default function TicketItem({ ticket, isDetail }: TicketItemProps) {
 
       <div className="flex flex-col gap-y-1">
         {isDetail ? (
-          <form action={deleteTicket.bind(null, ticket.id)}>
-            <TicketButton icon={<LucideTrash />} />
-          </form>
+          <>
+            <form action={deleteTicket.bind(null, ticket.id)}>
+              <TicketButton icon={<LucideTrash />} />
+            </form>
+            <TicketButton href={ticketEditPath(ticket.id)} />
+          </>
         ) : (
-          <TicketButton
-            href={ticketPath(ticket.id)}
-            icon={<LucideArrowUpRightFromSquare />}
-          />
+          <>
+            <TicketButton
+              href={ticketPath(ticket.id)}
+              icon={<LucideArrowUpRightFromSquare />}
+            />
+            <TicketButton href={ticketEditPath(ticket.id)} />
+          </>
         )}
       </div>
     </div>
@@ -73,7 +79,7 @@ function TicketButton({
 }: TicketButtonProps) {
   return (
     <Button
-    className="cursor-pointer"
+      className="cursor-pointer"
       variant="outline"
       size="icon"
       asChild={Boolean(href)}
