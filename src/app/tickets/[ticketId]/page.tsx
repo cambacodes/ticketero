@@ -2,9 +2,10 @@ import TicketItem from "@/features/ticket/components/TicketItem";
 import { getTicket } from "@/features/ticket/queries/getTicket";
 import { notFound } from "next/navigation";
 
-type TicketPageProps = { params: { ticketId: string } };
+type Params = Promise<{ ticketId: string }>;
 
-export default async function TicketPage({ params }: TicketPageProps) {
+export default async function TicketPage(props: { params: Params }) {
+  const params = await props.params;
   const ticket = await getTicket(params.ticketId);
 
   if (!ticket) {

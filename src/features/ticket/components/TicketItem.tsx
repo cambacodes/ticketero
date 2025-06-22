@@ -7,10 +7,12 @@ import { ticketPath } from "@/routes";
 import {
   LucideArrowUpRightFromSquare,
   LucidePencil,
+  LucideTrash,
   type LucideProps,
 } from "lucide-react";
 import Link from "next/link";
 
+import { deleteTicket } from "../actions/deleteTicket";
 import { TICKET_ICONS } from "../constants";
 import type { Ticket } from "../types";
 
@@ -41,28 +43,49 @@ export default function TicketItem({ ticket, isDetail }: TicketItemProps) {
           </span>
         </CardContent>
       </Card>
-      {!isDetail && (
-        <div className="flex flex-col gap-y-1">
+
+      <div className="flex flex-col gap-y-1">
+        {isDetail ? (
+          <form action={deleteTicket.bind(null, ticket.id)}>
+            <TicketButton icon={<LucideTrash />} />
+          </form>
+        ) : (
           <TicketButton
             href={ticketPath(ticket.id)}
             icon={<LucideArrowUpRightFromSquare />}
           />
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
 
 type TicketButtonProps = {
-  href: string;
+  href?: string;
   icon?: React.ReactElement;
-};
-function TicketButton({ href, icon = <LucidePencil /> }: TicketButtonProps) {
+  buttonText?: string;
+} & React.ComponentProps<typeof Button>;
+function TicketButton({
+  href,
+  icon = <LucidePencil />,
+  children: _,
+  ...butonProps
+}: TicketButtonProps) {
   return (
-    <Button variant="outline" size="icon" asChild>
-      <Link prefetch href={href}>
-        {cloneElement(icon, { className: "size-4" } as LucideProps)}
-      </Link>
+    <Button
+    className="cursor-pointer"
+      variant="outline"
+      size="icon"
+      asChild={Boolean(href)}
+      {...butonProps}
+    >
+      {href ? (
+        <Link prefetch href={href}>
+          {cloneElement(icon, { className: "size-4" } as LucideProps)}
+        </Link>
+      ) : (
+        cloneElement(icon, { className: "size-4" } as LucideProps)
+      )}
     </Button>
   );
 }
