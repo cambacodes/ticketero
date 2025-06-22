@@ -56,35 +56,40 @@ export default function TicketUpsertForm({ ticket }: TicketUpsertFormProps) {
       />
       <FieldError<Ticket> actionState={actionState} name="content" />
 
-      <Label htmlFor="deadline">Deadline</Label>
-      <DatePicker
-        onChange={handleDateChange}
-        defaultValue={
-          (actionState.payload?.get("deadline") as string)
-            ? new Date(actionState.payload?.get("deadline") as string)
-            : ticket?.deadline
-        }
-      />
-      <FieldError<Ticket> actionState={actionState} name="deadline" />
-      <input
-        type="datetime-local"
-        value={dateTime}
-        name="deadline"
-        id="deadline"
-        className="hidden"
-        onChange={handleNoop}
-      />
-
-      <Label htmlFor="bounty">Bounty</Label>
-      <Input
-        type="number"
-        name="bounty"
-        id="bounty"
-        defaultValue={
-          (actionState.payload?.get("bounty") as string) ?? ticket?.bounty
-        }
-      />
-      <FieldError<Ticket> actionState={actionState} name="bounty" />
+      <div className="flex gap-2">
+        <div className="flex-1">
+          <Label htmlFor="deadline">Deadline</Label>
+          <DatePicker
+            onChange={handleDateChange}
+            defaultValue={
+              (actionState.payload?.get("deadline") as string)
+                ? new Date(actionState.payload?.get("deadline") as string)
+                : ticket?.deadline
+            }
+          />
+          <FieldError<Ticket> actionState={actionState} name="deadline" />
+          <input
+            type="datetime-local"
+            value={dateTime}
+            name="deadline"
+            id="deadline"
+            className="hidden"
+            onChange={handleNoop}
+          />
+        </div>
+        <div>
+          <Label htmlFor="bounty">Bounty ($)</Label>
+          <Input
+            type="number"
+            name="bounty"
+            id="bounty"
+            defaultValue={
+              (actionState.payload?.get("bounty") as string) ?? ticket?.bounty
+            }
+          />
+          <FieldError<Ticket> actionState={actionState} name="bounty" />
+        </div>
+      </div>
 
       <SubmitButton label={ticket ? "Edit" : "Create"} />
     </Form>

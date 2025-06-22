@@ -1,5 +1,6 @@
 "use server";
 
+import { setCookie } from "@/lib/cookies";
 import { ticketsPath } from "@/routes";
 import { db } from "@/server/db";
 import { ticket } from "@/server/db/schema";
@@ -11,5 +12,6 @@ export const deleteTicket = async (ticketId: string) => {
   await db.delete(ticket).where(eq(ticket.id, ticketId)).returning();
 
   revalidatePath(ticketsPath());
+  await setCookie("toast", "Ticket Deleted");
   redirect(ticketsPath());
 };
