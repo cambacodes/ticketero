@@ -20,6 +20,7 @@ export const fromErrorToActionState = (
   payload: FormData
 ): ActionState => {
   const timestamp = Date.now();
+  console.log(error)
   if (error instanceof ZodError) {
     return {
       status: "ERROR",

@@ -1,6 +1,7 @@
 "use server";
 
 import { setCookie } from "@/lib/cookies";
+import { toCent } from "@/lib/currency";
 import {
   fromErrorToActionState,
   toActionState,
@@ -17,8 +18,10 @@ const upserTicketSchema = z.object({
   id: z.string().optional(),
   title: z.string().min(1).max(191),
   content: z.string().min(1).max(1024),
-  deadline: z.date(),
-  bounty: z.number(),
+  deadline: z.coerce.date(),
+  bounty: z.coerce
+    .number({ message: "Required" })
+    .min(1, { message: "Required" }),
 });
 export const upsertTicket = async (
   ticketId: string | undefined,
@@ -28,11 +31,13 @@ export const upsertTicket = async (
   try {
     const data = upserTicketSchema.parse({
       id: ticketId,
-      title: formData.get("title") as string,
-      content: formData.get("content") as string,
-      deadline: new Date(formData.get("deadline") as string),
-      bounty: parseInt(formData.get("bounty") as string),
+      title: formData.get("title"),
+      content: formData.get("content"),
+      deadline: formData.get("deadline"),
+      bounty: formData.get("bounty"),
     });
+
+    data.bounty = toCent(data.bounty);
 
     await db
       .insert(ticket)
