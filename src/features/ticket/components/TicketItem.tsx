@@ -1,7 +1,14 @@
 import { cloneElement } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { toCurrencyFromCent } from "@/lib/currency";
 import { cn } from "@/lib/utils";
 import { ticketEditPath, ticketPath } from "@/routes";
 import {
@@ -42,6 +49,14 @@ export default function TicketItem({ ticket, isDetail }: TicketItemProps) {
             {ticket.content}
           </span>
         </CardContent>
+        <CardFooter className="flex justify-between">
+          <span className="text-sm text-muted-foreground">
+            {ticket.deadline.toISOString().slice(0, 10)}
+          </span>
+          <span className="text-sm text-muted-foreground">
+            {toCurrencyFromCent(ticket.bounty)}
+          </span>
+        </CardFooter>
       </Card>
 
       <div className="flex flex-col gap-y-1">

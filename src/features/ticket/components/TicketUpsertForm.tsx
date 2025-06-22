@@ -2,10 +2,14 @@
 
 import React, { useActionState } from "react";
 
-import { DatePicker } from "@/components/DatePicker";
+import {
+  DatePicker,
+  type ImperativeHanldeFromDatePicker,
+} from "@/components/DatePicker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { fromCent } from "@/lib/currency";
 import { EMPTY_ACTION_STATE } from "@/lib/form/forms";
 
 import { upsertTicket } from "../actions/upsertTicket";
@@ -18,23 +22,21 @@ type TicketUpsertFormProps = {
   ticket?: Ticket;
 };
 export default function TicketUpsertForm({ ticket }: TicketUpsertFormProps) {
+  const datePickerImperativeHandle =
+    React.useRef<ImperativeHanldeFromDatePicker>(null);
   const [actionState, action] = useActionState(
     upsertTicket.bind(null, ticket?.id),
     EMPTY_ACTION_STATE
   );
-  const [dateTime, setDateTime] = React.useState<string>(
-    ticket?.deadline.toISOString().slice(0, 16) ?? ""
-  );
-
-  const handleDateChange = (date: Date) => {
-    setDateTime(date.toISOString().slice(0, 16));
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const handleNoop = React.useCallback(() => {}, []);
 
   return (
-    <Form action={action} actionState={actionState}>
+    <Form
+      action={action}
+      actionState={actionState}
+      onSuccess={() => {
+        datePickerImperativeHandle.current?.reset();
+      }}
+    >
       <Label htmlFor="title">Title</Label>
       <Input
         type="text"
@@ -56,35 +58,31 @@ export default function TicketUpsertForm({ ticket }: TicketUpsertFormProps) {
       />
       <FieldError<Ticket> actionState={actionState} name="content" />
 
-      <div className="flex gap-2">
-        <div className="flex-1">
+      <div className="flex gap-x-2 ">
+        <div className="w-1/2 flex flex-col gap-y-2">
           <Label htmlFor="deadline">Deadline</Label>
           <DatePicker
-            onChange={handleDateChange}
+            id="deadline"
+            name="deadline"
             defaultValue={
               (actionState.payload?.get("deadline") as string)
                 ? new Date(actionState.payload?.get("deadline") as string)
                 : ticket?.deadline
             }
+            imparativeHandle={datePickerImperativeHandle}
           />
           <FieldError<Ticket> actionState={actionState} name="deadline" />
-          <input
-            type="datetime-local"
-            value={dateTime}
-            name="deadline"
-            id="deadline"
-            className="hidden"
-            onChange={handleNoop}
-          />
         </div>
-        <div>
+        <div className="w-1/2 flex flex-col gap-y-2">
           <Label htmlFor="bounty">Bounty ($)</Label>
           <Input
             type="number"
             name="bounty"
+            step="0.01"
             id="bounty"
             defaultValue={
-              (actionState.payload?.get("bounty") as string) ?? ticket?.bounty
+              (actionState.payload?.get("bounty") as string) ??
+              (ticket?.bounty ? fromCent(ticket.bounty) : "")
             }
           />
           <FieldError<Ticket> actionState={actionState} name="bounty" />
