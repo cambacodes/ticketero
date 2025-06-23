@@ -1,11 +1,9 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import {
-  fromErrorToActionState,
-  toActionState,
-  type ActionState,
-} from "@/lib/form/forms";
+import { fromErrorToActionState, type ActionState } from "@/lib/form/forms";
+import { ticketsPath } from "@/routes";
+import { redirect } from "next/navigation";
 import z from "zod";
 
 const signUpSchema = z
@@ -14,7 +12,7 @@ const signUpSchema = z
       .string()
       .min(1)
       .max(191)
-      .refine((str) => str.includes(" "), { message: "No spaces allowed" }),
+      .refine((str) => !str.includes(" "), { message: "No spaces allowed" }),
     email: z.string().email(),
     password: z.string().min(1).max(191),
     confirmPassword: z.string().min(1).max(191),
@@ -46,5 +44,5 @@ export const signUp = async (_actionState: ActionState, formData: FormData) => {
     return fromErrorToActionState(e, formData);
   }
 
-  return toActionState("SUCCESS", "Signed Up");
+  redirect(ticketsPath());
 };
