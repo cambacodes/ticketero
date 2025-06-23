@@ -1,5 +1,6 @@
 "use client";
 
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,6 +13,7 @@ import {
 import { LucideMoreVertical, LucideTrash } from "lucide-react";
 import { toast } from "sonner";
 
+import { deleteTicket } from "../actions/deleteTicket";
 import { updateTicketStatus } from "../actions/updateStatus";
 import { TICKET_STATUS_LABELS } from "../constants";
 import type { Ticket } from "../types";
@@ -60,14 +62,19 @@ export default function TicketMoreMenu({ ticket }: TicketMoreMenuProps) {
             )}
           </DropdownMenuRadioGroup>
           <DropdownMenuSeparator />
-          <TicketButton
-            className="w-full"
-            size="default"
-            variant="ghost"
-            icon={<LucideTrash />}
-          >
-            Delete
-          </TicketButton>
+          <ConfirmDialog
+            action={deleteTicket.bind(null, ticket.id)}
+            trigger={
+              <TicketButton
+                className="w-full"
+                size="default"
+                variant="ghost"
+                icon={<LucideTrash />}
+              >
+                Delete
+              </TicketButton>
+            }
+          />
         </DropdownMenuContent>
       </DropdownMenu>
     </>

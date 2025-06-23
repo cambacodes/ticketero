@@ -14,12 +14,10 @@ import { ticketEditPath, ticketPath } from "@/routes";
 import {
   LucideArrowUpRightFromSquare,
   LucidePencil,
-  LucideTrash,
   type LucideProps,
 } from "lucide-react";
 import Link from "next/link";
 
-import { deleteTicket } from "../actions/deleteTicket";
 import { TICKET_ICONS } from "../constants";
 import type { Ticket } from "../types";
 import TicketMoreMenu from "./TicketMoreMenu";
@@ -63,9 +61,6 @@ export default function TicketItem({ ticket, isDetail }: TicketItemProps) {
       <div className="flex flex-col gap-y-1">
         {isDetail ? (
           <>
-            <form action={deleteTicket.bind(null, ticket.id)}>
-              <TicketButton icon={<LucideTrash />} />
-            </form>
             <TicketButton href={ticketEditPath(ticket.id)} />
             <TicketMoreMenu ticket={ticket} />
           </>
