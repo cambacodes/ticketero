@@ -22,6 +22,7 @@ import Link from "next/link";
 import { deleteTicket } from "../actions/deleteTicket";
 import { TICKET_ICONS } from "../constants";
 import type { Ticket } from "../types";
+import TicketMoreMenu from "./TicketMoreMenu";
 
 type TicketItemProps = { ticket: Ticket; isDetail?: boolean };
 
@@ -66,6 +67,7 @@ export default function TicketItem({ ticket, isDetail }: TicketItemProps) {
               <TicketButton icon={<LucideTrash />} />
             </form>
             <TicketButton href={ticketEditPath(ticket.id)} />
+            <TicketMoreMenu ticket={ticket} />
           </>
         ) : (
           <>
@@ -86,10 +88,10 @@ type TicketButtonProps = {
   icon?: React.ReactElement;
   buttonText?: string;
 } & React.ComponentProps<typeof Button>;
-function TicketButton({
+export function TicketButton({
   href,
   icon = <LucidePencil />,
-  children: _,
+  children,
   ...butonProps
 }: TicketButtonProps) {
   return (
@@ -105,7 +107,10 @@ function TicketButton({
           {cloneElement(icon, { className: "size-4" } as LucideProps)}
         </Link>
       ) : (
-        cloneElement(icon, { className: "size-4" } as LucideProps)
+        <>
+          {cloneElement(icon, { className: "size-4" } as LucideProps)}
+          {children}
+        </>
       )}
     </Button>
   );
