@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 
+import CardCompact from "@/components/CardCompact";
 import Heading from "@/components/Heading";
 import Spinner from "@/components/Spinner";
-import CardCompact from "@/features/ticket/components/CardCompact";
 import TicketList from "@/features/ticket/components/TicketList";
 import TicketUpsertForm from "@/features/ticket/components/TicketUpsertForm";
 

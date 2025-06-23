@@ -12,11 +12,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { fromCent } from "@/lib/currency";
 import { EMPTY_ACTION_STATE } from "@/lib/form/forms";
 
+import FieldError from "@/components/form/FieldError";
+import Form from "@/components/form/Form";
+import SubmitButton from "@/components/form/SubmitButton";
 import { upsertTicket } from "../actions/upsertTicket";
 import type { Ticket } from "../types";
-import FieldError from "./form/FieldError";
-import Form from "./form/Form";
-import SubmitButton from "./form/SubmitButton";
 
 type TicketUpsertFormProps = {
   ticket?: Ticket;
