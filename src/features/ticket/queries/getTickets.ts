@@ -1,8 +1,8 @@
 import { db } from "@/server/db";
 import { ticket } from "@/server/db/schema";
-import { desc } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
-export const getTickets = async () => {
+export const getTickets = async (userId?: string) => {
   const dbTickets = await db.query.ticket.findMany({
     with: {
       author: {
@@ -12,6 +12,7 @@ export const getTickets = async () => {
         },
       },
     },
+    where: userId ? eq(ticket.authorId, userId) : undefined,
     orderBy: [desc(ticket.createdAt)],
   });
 
