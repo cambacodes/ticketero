@@ -2,7 +2,7 @@
 
 import { signOut } from "@/features/auth/actions/signOut";
 import useAuth from "@/features/auth/hooks/useAuth";
-import { homePath, signInPath, signUpPath, ticketsPath } from "@/routes";
+import { homePath, signInPath, signUpPath } from "@/routes";
 import { LucideKanban, LucideLogOut } from "lucide-react";
 import Link from "next/link";
 
@@ -29,17 +29,9 @@ export default function Header() {
       <div className="flex justify-center gap-x-2">
         <ThemeSwitcher />
         {user ? (
-          <>
-            <Link
-              href={ticketsPath()}
-              className={buttonVariants({ variant: "default" })}
-            >
-              Tickets
-            </Link>
-            <form action={signOut.bind(null)}>
-              <SubmitButton label="Sign Out" icon={<LucideLogOut />} />
-            </form>
-          </>
+          <form action={signOut.bind(null)}>
+            <SubmitButton label="Sign Out" icon={<LucideLogOut />} />
+          </form>
         ) : (
           <>
             <Link
