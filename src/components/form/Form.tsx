@@ -28,7 +28,7 @@ export default function Form({
     onError: (actionState) => {
       onError?.(actionState);
       if (!actionState.message) return;
-      toast.success(actionState.message);
+      toast.error(actionState.message);
     },
   });
 

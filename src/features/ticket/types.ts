@@ -8,7 +8,12 @@ export interface Ticket {
   createdAt: Date;
   updatedAt: Date;
 }
-
+export interface TicketWithAuthor extends Ticket {
+  author: {
+    id: string;
+    name: string;
+  } | null;
+}
 type Status = Ticket["status"];
 
 // This is just for fun. I want to play with generics

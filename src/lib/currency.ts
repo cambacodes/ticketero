@@ -1,7 +1,6 @@
 import { MyBig } from "./big";
 
 export const toCent = (ammount: number) => {
-  console.log("Asdf", MyBig(ammount).mul(100).round(2).toNumber());
   return MyBig(ammount).mul(100).round(2).toNumber();
 };
 

@@ -17,7 +17,7 @@ import { deleteTicket } from "../actions/deleteTicket";
 import { updateTicketStatus } from "../actions/updateStatus";
 import { TICKET_STATUS_LABELS } from "../constants";
 import type { Ticket } from "../types";
-import { TicketButton } from "./TicketItem";
+import { TicketButton } from "./TicketButton";
 
 type TicketMoreMenuProps = {
   ticket: Ticket;

@@ -16,12 +16,17 @@ export const updateTicketStatus = async (
 ) => {
   try {
     const authSession = await getAuthSessionOrThrow();
-    await db
+    const [updatedTicket] = await db
       .update(ticket)
       .set({ status: status })
       .where(
         and(eq(ticket.id, ticketId), eq(ticket.authorId, authSession?.user?.id))
-      );
+      )
+      .returning();
+
+    if (!updatedTicket) {
+      return toActionState("ERROR", "Not authorized");
+    }
   } catch (e) {
     return fromErrorToActionState(e, undefined);
   }

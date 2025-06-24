@@ -1,6 +1,3 @@
-import { cloneElement } from "react";
-
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,23 +5,26 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getAuthSessionOrRedirect } from "@/features/auth/actions/getAuth";
 import { toCurrencyFromCent } from "@/lib/currency";
 import { cn } from "@/lib/utils";
 import { ticketEditPath, ticketPath } from "@/routes";
-import {
-  LucideArrowUpRightFromSquare,
-  LucidePencil,
-  type LucideProps,
-} from "lucide-react";
-import Link from "next/link";
+import { LucideArrowUpRightFromSquare } from "lucide-react";
 
 import { TICKET_ICONS } from "../constants";
-import type { Ticket } from "../types";
+import type { TicketWithAuthor } from "../types";
+import { TicketButton } from "./TicketButton";
 import TicketMoreMenu from "./TicketMoreMenu";
 
-type TicketItemProps = { ticket: Ticket; isDetail?: boolean };
+type TicketItemProps = { ticket: TicketWithAuthor; isDetail?: boolean };
 
-export default function TicketItem({ ticket, isDetail }: TicketItemProps) {
+export default async function TicketItem({
+  ticket,
+  isDetail,
+}: TicketItemProps) {
+  const { user } = await getAuthSessionOrRedirect();
+
+  const isOwner = user?.id === ticket.author?.id;
   return (
     <div
       className={cn(
@@ -48,65 +48,39 @@ export default function TicketItem({ ticket, isDetail }: TicketItemProps) {
             {ticket.content}
           </span>
         </CardContent>
-        <CardFooter className="flex justify-between">
-          <span className="text-sm text-muted-foreground">
-            {ticket.deadline.toISOString().slice(0, 10)}
-          </span>
-          <span className="text-sm text-muted-foreground">
-            {toCurrencyFromCent(ticket.bounty)}
-          </span>
+        <CardFooter className="flex flex-col gap-1">
+          <div className="flex justify-between w-full">
+            <span className="text-sm text-muted-foreground">
+              {ticket.deadline.toISOString().slice(0, 10)}
+            </span>
+            <span className="text-sm text-muted-foreground">
+              {toCurrencyFromCent(ticket.bounty)}
+            </span>
+          </div>
+          <div className="flex w-full justify-end text-xs text-muted-foreground">
+            {ticket.author?.name}
+          </div>
         </CardFooter>
       </Card>
 
       <div className="flex flex-col gap-y-1">
         {isDetail ? (
-          <>
-            <TicketButton href={ticketEditPath(ticket.id)} />
-            <TicketMoreMenu ticket={ticket} />
-          </>
+          isOwner && (
+            <>
+              <TicketButton href={ticketEditPath(ticket.id)} />
+              <TicketMoreMenu ticket={ticket} />
+            </>
+          )
         ) : (
           <>
             <TicketButton
               href={ticketPath(ticket.id)}
               icon={<LucideArrowUpRightFromSquare />}
             />
-            <TicketButton href={ticketEditPath(ticket.id)} />
+            {isOwner && <TicketButton href={ticketEditPath(ticket.id)} />}
           </>
         )}
       </div>
     </div>
-  );
-}
-
-type TicketButtonProps = {
-  href?: string;
-  icon?: React.ReactElement;
-  buttonText?: string;
-} & React.ComponentProps<typeof Button>;
-export function TicketButton({
-  href,
-  icon = <LucidePencil />,
-  children,
-  ...butonProps
-}: TicketButtonProps) {
-  return (
-    <Button
-      className="cursor-pointer"
-      variant="outline"
-      size="icon"
-      asChild={Boolean(href)}
-      {...butonProps}
-    >
-      {href ? (
-        <Link prefetch href={href}>
-          {cloneElement(icon, { className: "size-4" } as LucideProps)}
-        </Link>
-      ) : (
-        <>
-          {cloneElement(icon, { className: "size-4" } as LucideProps)}
-          {children}
-        </>
-      )}
-    </Button>
   );
 }

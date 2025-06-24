@@ -5,5 +5,13 @@ import { eq } from "drizzle-orm";
 export const getTicket = async (ticketId: string) => {
   return await db.query.ticket.findFirst({
     where: eq(ticket.id, ticketId),
+    with: {
+      author: {
+        columns: {
+          id: true,
+          name: true,
+        },
+      },
+    },
   });
 };

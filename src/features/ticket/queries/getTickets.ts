@@ -14,6 +14,6 @@ export const getTickets = async () => {
     },
     orderBy: [desc(ticket.createdAt)],
   });
-  console.log(dbTickets);
+
   return dbTickets;
 };

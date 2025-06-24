@@ -11,6 +11,7 @@ import {
 import { ticketsPath } from "@/routes";
 import { db } from "@/server/db";
 import { ticket } from "@/server/db/schema";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import z from "zod";
@@ -41,10 +42,19 @@ export const upsertTicket = async (
 
     data.bounty = toCent(data.bounty);
 
-    await db
-      .insert(ticket)
-      .values({ ...data, authorId: user.id })
-      .onConflictDoUpdate({ target: ticket.id, set: data });
+    if (ticketId) {
+      const [updatedTicket] = await db
+        .update(ticket)
+        .set(data)
+        .where(and(eq(ticket.id, ticketId), eq(ticket.authorId, user?.id)))
+        .returning();
+
+      if (!updatedTicket) {
+        return toActionState("ERROR", "Not authorized");
+      }
+    } else {
+      await db.insert(ticket).values({ ...data, authorId: user.id });
+    }
   } catch (e) {
     return fromErrorToActionState(e, formData);
   }
