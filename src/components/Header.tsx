@@ -1,12 +1,11 @@
 "use client";
 
-import { signOut } from "@/features/auth/actions/signOut";
+import { AccountDropdown } from "@/features/account/components/AccountDropdown";
 import useAuth from "@/features/auth/hooks/useAuth";
 import { homePath, signInPath, signUpPath } from "@/routes";
-import { LucideKanban, LucideLogOut } from "lucide-react";
+import { LucideKanban } from "lucide-react";
 import Link from "next/link";
 
-import SubmitButton from "./form/SubmitButton";
 import { ThemeSwitcher } from "./theme/ThemeSwitcher";
 import { buttonVariants } from "./ui/button";
 
@@ -29,9 +28,7 @@ export default function Header() {
       <div className="flex justify-center gap-x-2">
         <ThemeSwitcher />
         {user ? (
-          <form action={signOut.bind(null)}>
-            <SubmitButton label="Sign Out" icon={<LucideLogOut />} />
-          </form>
+          <AccountDropdown user={user} />
         ) : (
           <>
             <Link
