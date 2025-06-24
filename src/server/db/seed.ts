@@ -1,5 +1,8 @@
+/* eslint-disable drizzle/enforce-delete-with-where */
+import { hashPassword } from "better-auth/crypto";
+
 import { db } from "./index";
-import { ticket } from "./schema";
+import { account, ticket, user } from "./schema";
 
 const tickets = [
   {
@@ -25,26 +28,57 @@ const tickets = [
   },
 ];
 
-let t0: number;
 const main = async () => {
-  t0 = performance.now();
+  const t0 = performance.now();
 
-  // eslint-disable-next-line drizzle/enforce-delete-with-where
+  console.log("🚨 Resetting DB...");
   await db.delete(ticket);
+  await db.delete(account);
+  await db.delete(user);
 
-  console.log("db seed started...");
-  for (const ticketData of tickets) {
-    await db.insert(ticket).values(ticketData);
-  }
+  console.log("🔐 Creating admin user...");
+  const email = "admin@admin.com";
+  const password = "123456789";
+  const hashedPassword = await hashPassword(password);
+
+  await db.transaction(async (tx) => {
+    const [adminUser] = await tx
+      .insert(user)
+      .values({
+        id: crypto.randomUUID(),
+        email,
+        name: "Admin",
+      })
+      .returning();
+
+    if (!adminUser) throw new Error("Failed to insert admin user");
+
+    await tx.insert(account).values({
+      id: crypto.randomUUID(),
+      accountId: "admin",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      providerId: "credential",
+      password: hashedPassword,
+      userId: adminUser.id,
+    });
+
+    console.log("🎟️  Inserting test tickets...");
+    for (const ticketData of tickets) {
+      await tx.insert(ticket).values({
+        ...ticketData,
+        authorId: adminUser.id,
+      });
+    }
+  });
+
+  const t1 = performance.now();
+  console.log(`✅ DB seeded in ${(t1 - t0).toFixed(2)}ms`);
 };
 
 main()
   .catch((e) => {
-    console.error("Unexpected error:", e);
+    console.error("❌ Seed failed:", e);
     process.exit(1);
   })
-  .finally(() => {
-    const t1 = performance.now();
-    console.log(`db seed finished (${(t1 - t0).toFixed(2)})ms`);
-    process.exit(0);
-  });
+  .finally(() => process.exit(0));

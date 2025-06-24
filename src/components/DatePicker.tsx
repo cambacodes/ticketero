@@ -33,11 +33,15 @@ export function DatePicker({
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(defaultValue);
 
-  React.useImperativeHandle(imparativeHandle, () => ({
-    reset: () => {
-      setDate(undefined);
-    },
-  }),[]);
+  React.useImperativeHandle(
+    imparativeHandle,
+    () => ({
+      reset: () => {
+        setDate(undefined);
+      },
+    }),
+    []
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const handleNoop = React.useCallback(() => {}, []);

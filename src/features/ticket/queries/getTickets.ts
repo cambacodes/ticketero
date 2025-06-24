@@ -3,10 +3,17 @@ import { ticket } from "@/server/db/schema";
 import { desc } from "drizzle-orm";
 
 export const getTickets = async () => {
-  const dbTickets = await db
-    .select()
-    .from(ticket)
-    .orderBy(desc(ticket.createdAt));
-
+  const dbTickets = await db.query.ticket.findMany({
+    with: {
+      author: {
+        columns: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+    orderBy: [desc(ticket.createdAt)],
+  });
+  console.log(dbTickets);
   return dbTickets;
 };

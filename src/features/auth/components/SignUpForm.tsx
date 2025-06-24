@@ -8,13 +8,22 @@ import SubmitButton from "@/components/form/SubmitButton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EMPTY_ACTION_STATE } from "@/lib/form/forms";
+import { ticketsPath } from "@/routes";
+import { useRouter } from "next/navigation";
 
 import { signUp, type SignUpSchema } from "../actions/signUp";
 
 export default function SignUpForm() {
   const [actionState, formAction] = useActionState(signUp, EMPTY_ACTION_STATE);
+  const router = useRouter();
   return (
-    <Form actionState={actionState} action={formAction}>
+    <Form
+      actionState={actionState}
+      action={formAction}
+      onSuccess={() => {
+        router.push(ticketsPath());
+      }}
+    >
       <Label htmlFor="username"> Username</Label>
       <Input
         id="username"

@@ -2,10 +2,10 @@
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
 import { env } from "@/env";
+import { relations } from "drizzle-orm";
 import {
   integer,
   pgEnum,
-  pgTable,
   pgTableCreator,
   text,
   timestamp,
@@ -13,7 +13,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-export * from "./auth-schema";
+import { user } from "./auth-schema";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -31,7 +31,7 @@ export const ticketStatus = pgEnum("ticket_status", [
   "DONE",
 ]);
 
-export const ticket = pgTable("ticket", {
+export const ticket = createTable("ticket", {
   id: uuid().defaultRandom().primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   content: text("content").notNull(),
@@ -48,4 +48,21 @@ export const ticket = pgTable("ticket", {
     .defaultNow()
     .notNull()
     .$onUpdate(() => new Date()),
+
+  authorId: text()
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
 });
+
+export const userRelations = relations(user, ({ many }) => ({
+  tickets: many(ticket),
+}));
+
+export const ticketRelations = relations(ticket, ({ one }) => ({
+  author: one(user, {
+    fields: [ticket.authorId],
+    references: [user.id],
+  }),
+}));
+
+export * from "./auth-schema";

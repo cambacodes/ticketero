@@ -1,9 +1,11 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { fromErrorToActionState, type ActionState } from "@/lib/form/forms";
-import { ticketsPath } from "@/routes";
-import { redirect } from "next/navigation";
+import {
+  fromErrorToActionState,
+  toActionState,
+  type ActionState,
+} from "@/lib/form/forms";
 import z from "zod";
 
 const signUpSchema = z
@@ -44,5 +46,5 @@ export const signUp = async (_actionState: ActionState, formData: FormData) => {
     return fromErrorToActionState(e, formData);
   }
 
-  redirect(ticketsPath());
+  return toActionState("SUCCESS", "Signed Up");
 };

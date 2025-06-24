@@ -1,5 +1,6 @@
 "use server";
 
+import { getAuthSession } from "@/features/auth/actions/getAuth";
 import { setCookie } from "@/lib/cookies";
 import { toCent } from "@/lib/currency";
 import {
@@ -29,6 +30,7 @@ export const upsertTicket = async (
   formData: FormData
 ) => {
   try {
+    const { user } = await getAuthSession();
     const data = upserTicketSchema.parse({
       id: ticketId,
       title: formData.get("title"),
@@ -41,7 +43,7 @@ export const upsertTicket = async (
 
     await db
       .insert(ticket)
-      .values(data)
+      .values({ ...data, authorId: user.id })
       .onConflictDoUpdate({ target: ticket.id, set: data });
   } catch (e) {
     return fromErrorToActionState(e, formData);

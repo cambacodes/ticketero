@@ -17,10 +17,10 @@ export const EMPTY_ACTION_STATE: ActionState = {
 
 export const fromErrorToActionState = (
   error: unknown,
-  payload: FormData|undefined
+  payload: FormData | undefined
 ): ActionState => {
   const timestamp = Date.now();
-  console.log(error)
+  console.log(error);
   if (error instanceof ZodError) {
     return {
       status: "ERROR",
