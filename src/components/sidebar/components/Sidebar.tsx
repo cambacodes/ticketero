@@ -3,16 +3,25 @@
 import React from "react";
 
 import useAuth from "@/features/auth/hooks/useAuth";
+import { getActivePath } from "@/lib/getActivePath";
 import { cn } from "@/lib/utils";
+import { signInPath, signUpPath } from "@/routes";
+import { usePathname } from "next/navigation";
 
 import { navItems } from "../constants";
 import SidebarItem from "./SidebarItem";
 
 export default function Sidebar() {
-  const { user, isPending } = useAuth();
-
+  const { user } = useAuth();
+  const pathName = usePathname();
   const [isTransition, setTransition] = React.useState(false);
   const [isOpen, setOpen] = React.useState(false);
+
+  const { activeIndex } = getActivePath(
+    pathName,
+    navItems.map((item) => item.href),
+    [signInPath(), signUpPath()]
+  );
 
   const handleToogle = (open: boolean) => {
     setTransition(true);
@@ -26,8 +35,8 @@ export default function Sidebar() {
     <div className="bg-secondary/20">
       <div
         className={cn(
-          "relative transition-all duration-200",
-          isPending ? "-translate-x-full pointer-events-none" : "translate-x-0"
+          "relative transition-all duration-200 -translate-x-full",
+          user && "translate-x-0"
         )}
       >
         <nav
@@ -41,8 +50,13 @@ export default function Sidebar() {
         >
           <div className="px-3 py-2">
             <nav className="space-y-2">
-              {navItems.map((item) => (
-                <SidebarItem key={item.href} navItem={item} isOpen={isOpen} />
+              {navItems.map((item, index) => (
+                <SidebarItem
+                  key={item.href}
+                  navItem={item}
+                  isOpen={isOpen}
+                  isActive={activeIndex === index}
+                />
               ))}
             </nav>
           </div>

@@ -1,6 +1,7 @@
 import { cloneElement } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import type { LucideProps } from "lucide-react";
 import Link from "next/link";
@@ -12,33 +13,40 @@ import type { NavItem } from "../types";
 type SidebarItemProps = {
   isOpen: boolean;
   navItem: NavItem;
+  isActive: boolean;
 };
 
-export default function SidebarItem({ isOpen, navItem }: SidebarItemProps) {
+export default function SidebarItem({
+  isOpen,
+  navItem,
+  isActive,
+}: SidebarItemProps) {
   const path = usePathname();
-  const isActive = path === navItem.href;
 
   return (
-    <Link
-      href={navItem.href}
-      className={cn(
-        buttonVariants({ variant: "ghost" }),
-        "group relative flex h-12 items-center justify-start transition-all duration-300",
-        isActive && "bg-muted font-bold hover:bg-muted"
-      )}
-    >
-      <span className={cn("flex-shrink-0 transition-all translate-x-[2px]")}>
-        {cloneElement(navItem.icon, { className: "size-5" } as LucideProps)}
-      </span>
-
-      <span
+    <>
+      {navItem.separator && <Separator />}
+      <Link
+        href={navItem.href}
         className={cn(
-          "ml-3 text-base transition-opacity duration-200 md:block hidden",
-          !isOpen && closedClassName
+          buttonVariants({ variant: "ghost" }),
+          "group relative flex h-12 items-center justify-start transition-all duration-300",
+          isActive && "bg-muted font-bold hover:bg-muted"
         )}
       >
-        {navItem.title}
-      </span>
-    </Link>
+        <span className={cn("flex-shrink-0 transition-all translate-x-[2px]")}>
+          {cloneElement(navItem.icon, { className: "size-5" } as LucideProps)}
+        </span>
+
+        <span
+          className={cn(
+            "ml-3 text-base transition-opacity duration-200 md:block hidden",
+            !isOpen && closedClassName
+          )}
+        >
+          {navItem.title}
+        </span>
+      </Link>
+    </>
   );
 }
