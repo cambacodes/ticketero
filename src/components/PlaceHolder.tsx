@@ -8,7 +8,7 @@ type PlaceHolderProps = {
   button?: React.ReactElement;
 };
 
-export default function PlaceHolder({
+export default function Placeholder({
   label,
   icon = <LucideMessageSquareWarning />,
   button = <div />,

@@ -14,6 +14,12 @@ export interface TicketWithAuthor extends Ticket {
     name: string;
   } | null;
 }
+
+export type paginatedTicketMetadata = {
+  count: number;
+  hasNextPage: boolean;
+};
+
 type Status = Ticket["status"];
 
 // This is just for fun. I want to play with generics
