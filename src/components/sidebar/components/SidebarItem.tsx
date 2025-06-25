@@ -5,7 +5,6 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import type { LucideProps } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 
 import { closedClassName } from "../constants";
 import type { NavItem } from "../types";
@@ -21,8 +20,6 @@ export default function SidebarItem({
   navItem,
   isActive,
 }: SidebarItemProps) {
-  const path = usePathname();
-
   return (
     <>
       {navItem.separator && <Separator />}
