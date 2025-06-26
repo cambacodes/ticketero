@@ -11,6 +11,7 @@ import {
   timestamp,
   uuid,
   varchar,
+  type AnyPgColumn,
 } from "drizzle-orm/pg-core";
 
 import { user } from "./auth-schema";
@@ -48,20 +49,63 @@ export const ticket = createTable("ticket", {
     .defaultNow()
     .notNull()
     .$onUpdate(() => new Date()),
-
   authorId: text()
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
+export const comment = createTable("comment", {
+  id: uuid().defaultRandom().primaryKey(),
+  content: text("content").notNull(),
+  authorId: text("author_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  ticketId: uuid("ticket_id")
+    .notNull()
+    .references(() => ticket.id, { onDelete: "cascade" }),
+  parentCommentId: uuid("parent_comment_id").references(
+    (): AnyPgColumn => comment.id,
+    {
+      onDelete: "cascade",
+    }
+  ),
+  createdAt: timestamp("created_at", { mode: "date", withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true })
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
 export const userRelations = relations(user, ({ many }) => ({
   tickets: many(ticket),
+  comments: many(comment),
 }));
 
-export const ticketRelations = relations(ticket, ({ one }) => ({
+export const ticketRelations = relations(ticket, ({ one, many }) => ({
   author: one(user, {
     fields: [ticket.authorId],
     references: [user.id],
+  }),
+  comments: many(comment),
+}));
+
+export const commentRelations = relations(comment, ({ one, many }) => ({
+  author: one(user, {
+    fields: [comment.authorId],
+    references: [user.id],
+  }),
+  ticket: one(ticket, {
+    fields: [comment.ticketId],
+    references: [ticket.id],
+  }),
+  parentComment: one(comment, {
+    fields: [comment.parentCommentId],
+    references: [comment.id],
+    relationName: "parentComment",
+  }),
+  replies: many(comment, {
+    relationName: "parentComment",
   }),
 }));
 
