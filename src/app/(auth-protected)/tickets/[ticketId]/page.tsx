@@ -1,5 +1,7 @@
 import { BreadCrumbs } from "@/components/Breadcrumbs";
 import { Separator } from "@/components/ui/separator";
+import { Comments } from "@/features/comment/component/Comments";
+import { getComments } from "@/features/comment/queries/getComments";
 import TicketItem from "@/features/ticket/components/TicketItem";
 import { getTicket } from "@/features/ticket/queries/getTicket";
 import { notFound } from "next/navigation";
@@ -8,7 +10,13 @@ type Params = Promise<{ ticketId: string }>;
 
 export default async function TicketPage(props: { params: Params }) {
   const params = await props.params;
-  const ticket = await getTicket(params.ticketId);
+  const ticketPromise = getTicket(params.ticketId);
+  const commentsPromise = getComments(params.ticketId);
+
+  const [ticket, paginatedComments] = await Promise.all([
+    ticketPromise,
+    commentsPromise,
+  ]);
 
   if (!ticket) {
     notFound();
@@ -24,7 +32,16 @@ export default async function TicketPage(props: { params: Params }) {
       />
       <Separator />
       <div className="flex justify-center animate-fade-from-top">
-        <TicketItem ticket={ticket} isDetail />
+        <TicketItem
+          ticket={ticket}
+          isDetail
+          comments={
+            <Comments
+              ticketId={ticket.id}
+              paginatedComments={paginatedComments}
+            />
+          }
+        />
       </div>
     </div>
   );

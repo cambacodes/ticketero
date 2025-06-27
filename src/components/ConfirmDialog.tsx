@@ -14,12 +14,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { EMPTY_ACTION_STATE, type ActionState } from "@/lib/form/forms";
+import useActionFeedback from "@/lib/form/useActionFeedback";
 
 type ConfirmDialogProps = {
   title?: string;
   description?: string;
   action: () => Promise<ActionState>;
   trigger: React.ReactNode;
+  onSuccess?: () => void;
 };
 
 export default function ConfirmDialog({
@@ -27,9 +29,16 @@ export default function ConfirmDialog({
   description = "This action cannot be undone. Make sure you understand the consequences.",
   action,
   trigger,
+  onSuccess,
 }: ConfirmDialogProps) {
   const [open, setOpen] = React.useState(false);
   const [actionState, formAction] = useActionState(action, EMPTY_ACTION_STATE);
+
+  useActionFeedback(actionState, {
+    onSuccess: () => {
+      onSuccess?.();
+    },
+  });
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild onClick={() => setOpen(true)}>
