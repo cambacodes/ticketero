@@ -5,12 +5,8 @@ import { setCookie } from "@/lib/cookies";
 import { fromErrorToActionState, type ActionState } from "@/lib/form/forms";
 import { ticketsPath } from "@/routes";
 import { redirect } from "next/navigation";
-import z from "zod";
 
-const signInSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1).max(191),
-});
+import { signInSchema } from "../schema";
 
 export const signIn = async (_actionState: ActionState, formData: FormData) => {
   let username: string;

@@ -4,6 +4,8 @@ import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 
+import { generatePasswordResetLink } from "./generatePasswordResetLink";
+
 export const config: BetterAuthOptions = {
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -16,6 +18,13 @@ export const config: BetterAuthOptions = {
   },
   emailAndPassword: {
     enabled: true,
+    minPasswordLength: 6,
+    sendResetPassword: async ({ token }) => {
+      console.log(
+        "🚀 ~ sendResetPassword: ~ url:",
+        generatePasswordResetLink(token)
+      );
+    },
   },
   secret: env.BETTER_AUTH_SECRET,
   plugins: [nextCookies()],
