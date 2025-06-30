@@ -56,5 +56,6 @@ export const toActionState = (
     status,
     message,
     data,
+    timestamp: Date.now(),
   };
 };
