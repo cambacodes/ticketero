@@ -1,11 +1,11 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import {
   fromErrorToActionState,
   toActionState,
   type ActionState,
 } from "@/lib/form/forms";
+import { inngest } from "@/lib/inngest";
 import { db } from "@/server/db";
 
 import { emailSchema } from "../schema";
@@ -26,16 +26,10 @@ export const passwordForgot = async (
       return toActionState("SUCCESS", message, formData);
     }
 
-    await auth.api.requestPasswordReset({
-      body: {
-        email,
-      },
+    await inngest.send({
+      name: "app/password.password-reset",
+      data: { userId: user.id },
     });
-
-    // await inngest.send({
-    //   name: "app/password.password-reset",
-    //   data: { userId: user.id },
-    // });
   } catch (error) {
     return fromErrorToActionState(error, formData);
   }
