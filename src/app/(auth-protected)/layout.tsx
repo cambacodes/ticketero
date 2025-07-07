@@ -5,7 +5,7 @@ import { getAuthSessionOrRedirect } from "@/features/auth/actions/getAuth";
 type AuthLayoutProps = { children: React.ReactNode };
 
 export default async function AuthLayout({ children }: AuthLayoutProps) {
-  await getAuthSessionOrRedirect();
+  await getAuthSessionOrRedirect({ checkOrganizations: true });
 
   return <>{children}</>;
 }
