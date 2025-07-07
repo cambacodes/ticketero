@@ -284,4 +284,14 @@ if (isDirectlyExecuted) {
   }
 }
 
-void resetDatabase("drop");
+if (process.argv[1] === new URL(import.meta.url).pathname) {
+  const result = parseCommandLineArgs();
+
+  if (result) {
+    const { mode, options } = result;
+    console.log(
+      `Running database reset with mode: ${mode}, dry run: ${options.dry ? "yes" : "no"}`
+    );
+    void resetDatabase(mode, options);
+  }
+}

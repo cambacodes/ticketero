@@ -1,0 +1,20 @@
+import { createAccessControl } from "better-auth/plugins/access";
+import {
+  adminAc,
+  defaultStatements,
+} from "better-auth/plugins/organization/access";
+
+const statement = {
+  ...defaultStatements,
+  project: ["create", "update", "delete"],
+} as const;
+
+export const ac = createAccessControl(statement);
+
+export const admin = ac.newRole({
+  project: ["create", "update", "delete"],
+  ...adminAc.statements,
+});
+export const user = ac.newRole({
+  project: ["create"],
+});

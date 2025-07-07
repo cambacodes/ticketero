@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { inngest } from "@/lib/inngest";
 import { db } from "@/server/db";
 

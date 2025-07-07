@@ -3,10 +3,22 @@ import { db } from "@/server/db";
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
+import { organization } from "better-auth/plugins";
 
-import { generatePasswordResetLink } from "./generatePasswordResetLink";
+import { generatePasswordResetLink } from "../generatePasswordResetLink";
+import { ac, admin, user } from "./permissions";
 
-export const config: BetterAuthOptions = {
+export const config = {
+  plugins: [
+    organization({
+      ac,
+      roles: {
+        user,
+        admin,
+      },
+    }),
+    nextCookies(),
+  ],
   database: drizzleAdapter(db, {
     provider: "pg",
   }),
@@ -27,7 +39,6 @@ export const config: BetterAuthOptions = {
     },
   },
   secret: env.BETTER_AUTH_SECRET,
-  plugins: [nextCookies()],
 } satisfies BetterAuthOptions;
 
 export const auth = betterAuth(config);

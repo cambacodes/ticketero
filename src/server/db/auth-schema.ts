@@ -33,6 +33,7 @@ export const session = createTable("session", {
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  activeOrganizationId: text("active_organization_id"),
 });
 
 export const account = createTable("account", {
@@ -64,4 +65,39 @@ export const verification = createTable("verification", {
   updatedAt: timestamp("updated_at").$defaultFn(
     () => /* @__PURE__ */ new Date()
   ),
+});
+
+export const organization = createTable("organization", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  slug: text("slug").unique(),
+  logo: text("logo"),
+  createdAt: timestamp("created_at").notNull(),
+  metadata: text("metadata"),
+});
+
+export const member = createTable("member", {
+  id: text("id").primaryKey(),
+  organizationId: text("organization_id")
+    .notNull()
+    .references(() => organization.id, { onDelete: "cascade" }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  role: text("role").default("member").notNull(),
+  createdAt: timestamp("created_at").notNull(),
+});
+
+export const invitation = createTable("invitation", {
+  id: text("id").primaryKey(),
+  organizationId: text("organization_id")
+    .notNull()
+    .references(() => organization.id, { onDelete: "cascade" }),
+  email: text("email").notNull(),
+  role: text("role"),
+  status: text("status").default("pending").notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  inviterId: text("inviter_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
 });

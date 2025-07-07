@@ -1,7 +1,7 @@
 "use client";
 
 import { AccountDropdown } from "@/features/account/components/AccountDropdown";
-import useAuth from "@/features/auth/hooks/useAuth";
+import { useAuth } from "@/lib/auth/useAuth";
 import { homePath, signInPath, signUpPath } from "@/routes";
 import { LucideKanban } from "lucide-react";
 import Link from "next/link";

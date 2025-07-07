@@ -36,7 +36,7 @@ export default function SignInForm() {
       />
       <FieldError<SignUpSchema> actionState={actionState} name="password" />
 
-      <SubmitButton className="mt-4" label="Sign Up" />
+      <SubmitButton className="mt-4" label="Sign In" />
     </Form>
   );
 }

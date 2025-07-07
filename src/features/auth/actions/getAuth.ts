@@ -2,7 +2,7 @@
 
 import { cache } from "react";
 
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { signInPath } from "@/routes";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";

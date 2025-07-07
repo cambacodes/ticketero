@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import useAuth from "@/features/auth/hooks/useAuth";
+import { useAuth } from "@/lib/auth/useAuth";
 import { getActivePath } from "@/lib/getActivePath";
 import { cn } from "@/lib/utils";
 import { signInPath, signUpPath } from "@/routes";

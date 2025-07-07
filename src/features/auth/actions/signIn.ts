@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { setCookie } from "@/lib/cookies";
 import { fromErrorToActionState, type ActionState } from "@/lib/form/forms";
 import { ticketsPath } from "@/routes";
@@ -27,6 +27,7 @@ export const signIn = async (_actionState: ActionState, formData: FormData) => {
   }
 
   await setCookie("toast", `Signed In as ${username}`);
+  await setCookie("revalidate-auth", `true`);
   redirect(ticketsPath());
   //   return toActionState("SUCCESS", "Signed In");
 };
