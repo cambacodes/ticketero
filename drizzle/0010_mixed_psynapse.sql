@@ -1,1 +1,0 @@
-DROP TABLE "ticketero_comment_to_comment" CASCADE;

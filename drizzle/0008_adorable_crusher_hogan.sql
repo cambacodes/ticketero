@@ -1,3 +1,0 @@
---> statement-breakpoint
-ALTER TABLE "ticketero_comment" ADD CONSTRAINT "ticketero_comment_author_id_ticketero_user_id_fk" FOREIGN KEY ("author_id") REFERENCES "public"."ticketero_user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "ticketero_comment" ADD CONSTRAINT "ticketero_comment_ticket_id_ticketero_ticket_id_fk" FOREIGN KEY ("ticket_id") REFERENCES "public"."ticketero_ticket"("id") ON DELETE cascade ON UPDATE no action;

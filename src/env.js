@@ -8,7 +8,7 @@ export const env = createEnv({
    */
   server: {
     DATABASE_URL: z.string().url(),
-    DB_TABLE_FILTER: z.string().min(1),
+    DB_TABLE_FILTER: z.string().min(1).max(3),
     BETTER_AUTH_SECRET: z.string().min(1),
     INNGEST_ID: z.string().min(1),
     NODE_ENV: z

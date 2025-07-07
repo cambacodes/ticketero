@@ -1,2 +1,0 @@
-ALTER TABLE "ticketero_comment" ADD COLUMN "parentCommentId" uuid;--> statement-breakpoint
-ALTER TABLE "ticketero_comment" ADD CONSTRAINT "ticketero_comment_parentCommentId_ticketero_comment_id_fk" FOREIGN KEY ("parentCommentId") REFERENCES "public"."ticketero_comment"("id") ON DELETE cascade ON UPDATE no action;
