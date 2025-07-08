@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { CanI } from "@/lib/auth/CanI";
 import { organizationEditPath, organizationPath } from "@/routes";
 import { type InvitationStatus } from "better-auth/plugins";
 import { format } from "date-fns";
@@ -53,6 +54,7 @@ type OrganizationListProps = {
     createdAt: Date;
     slug: string;
     logo?: string | null | undefined;
+    role: "user" | "admin" | "owner";
   }[];
 };
 const OrganizationList = ({ organizations }: OrganizationListProps) => {
@@ -113,9 +115,21 @@ const OrganizationList = ({ organizations }: OrganizationListProps) => {
           const buttons = (
             <>
               {switchButton}
-              {detailButton}
-              {editButton}
-              {deleteButton}
+              <CanI
+                role={organization.role}
+                action="update"
+                permission="organization"
+              >
+                {detailButton}
+                {editButton}
+              </CanI>
+              <CanI
+                role={organization.role}
+                action="delete"
+                permission="organization"
+              >
+                {deleteButton}
+              </CanI>
             </>
           );
 

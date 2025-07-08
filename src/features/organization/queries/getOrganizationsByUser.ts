@@ -3,7 +3,8 @@ import { auth } from "@/lib/auth/auth";
 import { headers as nextHeaders } from "next/headers";
 
 export const getOrganizationsByUser = async () => {
-  const { session } = await getAuthSessionOrRedirect();
+  const { session, user } = await getAuthSessionOrRedirect();
+
   const headers = await nextHeaders();
 
   const listOrganizations = await auth.api.listOrganizations({
@@ -25,5 +26,8 @@ export const getOrganizationsByUser = async () => {
   return organizations.map((organization) => ({
     ...organization!,
     isActive: organization?.id === session.activeOrganizationId,
+    role:
+      organization?.members.find((member) => member.userId === user.id)?.role ??
+      "member" as "admin" | "owner" | "user",
   }));
 };

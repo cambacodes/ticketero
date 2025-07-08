@@ -5,7 +5,7 @@ import {
   ownerAc,
 } from "better-auth/plugins/organization/access";
 
-const statement = {
+export const statement = {
   ...defaultStatements,
   project: ["create", "update", "delete"],
 } as const;
@@ -24,3 +24,7 @@ export const owner = ac.newRole({
 export const user = ac.newRole({
   project: ["create"],
 });
+
+export type PermissionResource = keyof typeof statement;
+export type PermissionAction<R extends PermissionResource> =
+  (typeof statement)[R][number];
