@@ -28,6 +28,6 @@ export const getOrganizationsByUser = async () => {
     isActive: organization?.id === session.activeOrganizationId,
     role:
       organization?.members.find((member) => member.userId === user.id)?.role ??
-      "member" as "admin" | "owner" | "user",
+      ("member" as "admin" | "owner" | "user"),
   }));
 };
