@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 
 import { switchActiveOrganization } from "../actions/switchActiveOrganization";
 import { OrganizationDeleteButton } from "./OrganizationDeleteButton";
+import { OrganizationLeaveButton } from "./OrganizationLeaveButton";
 
 type OrganizationListProps = {
   organizations: {
@@ -111,6 +112,12 @@ const OrganizationList = ({ organizations }: OrganizationListProps) => {
               organizationSlug={organization?.slug}
             />
           );
+          const leaveButton = (
+            <OrganizationLeaveButton
+              organizationName={organization?.name}
+              organizationSlug={organization?.slug}
+            />
+          );
 
           const buttons = (
             <>
@@ -130,6 +137,7 @@ const OrganizationList = ({ organizations }: OrganizationListProps) => {
               >
                 {deleteButton}
               </CanI>
+              {leaveButton}
             </>
           );
 
