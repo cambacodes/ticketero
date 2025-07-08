@@ -8,7 +8,7 @@ import SubmitButton from "@/components/form/SubmitButton";
 import { Input } from "@/components/ui/input";
 import { EMPTY_ACTION_STATE } from "@/lib/form/forms";
 
-import { createOrganization } from "../action/createOrganization";
+import { createOrganization } from "../actions/createOrganization";
 
 const OrganizationCreateForm = () => {
   const [actionState, action] = useActionState(

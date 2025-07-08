@@ -4,11 +4,13 @@ import Heading from "@/components/Heading";
 import Spinner from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import { OrganizationList } from "@/features/organization/components/organizationList";
+import { getOrganizationsByUser } from "@/features/organization/queries/getOrganizationsByUser";
 import { organizationCreatePath } from "@/routes";
 import { LucidePlus } from "lucide-react";
 import Link from "next/link";
 
-const OrganizationPage = () => {
+const OrganizationPage = async () => {
+  const organizations = await getOrganizationsByUser();
   return (
     <div className="flex-1 flex flex-col gap-y-8">
       <Heading
@@ -25,7 +27,7 @@ const OrganizationPage = () => {
       />
 
       <Suspense fallback={<Spinner />}>
-        <OrganizationList />
+        <OrganizationList organizations={organizations} />
       </Suspense>
     </div>
   );

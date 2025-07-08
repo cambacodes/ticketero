@@ -37,7 +37,6 @@ export const getAuthSessionOrRedirect = cache(
 
     if (options?.checkOrganizations) {
       const organizations = await getOrganizationsByUser();
-      console.log("🚀 ~ organizations:", organizations);
 
       if (!organizations.length) {
         redirect(onboardingPath());

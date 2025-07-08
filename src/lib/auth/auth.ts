@@ -6,7 +6,7 @@ import { nextCookies } from "better-auth/next-js";
 import { organization } from "better-auth/plugins";
 
 import { generatePasswordResetLink } from "../generatePasswordResetLink";
-import { ac, admin, user } from "./permissions";
+import { ac, admin, owner, user } from "./permissions";
 
 export const config = {
   plugins: [
@@ -15,6 +15,7 @@ export const config = {
       roles: {
         user,
         admin,
+        owner,
       },
     }),
     nextCookies(),

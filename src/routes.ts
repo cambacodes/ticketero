@@ -14,5 +14,9 @@ export const accountPasswordPath = () => "/account/password";
 
 export const organizationsPath = () => "/organization";
 export const organizationCreatePath = () => "/organization/create";
+export const organizationPath = (organizationSlug: string) =>
+  `/organization/${organizationSlug}`;
+export const organizationEditPath = (organizationSlug: string) =>
+  `/organization/${organizationSlug}/edit`;
 
 export const onboardingPath = () => "/onboarding";

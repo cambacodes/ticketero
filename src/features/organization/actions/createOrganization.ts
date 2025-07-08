@@ -4,7 +4,7 @@ import { getAuthSessionOrRedirect } from "@/features/auth/actions/getAuth";
 import { auth } from "@/lib/auth/auth";
 import { setCookie } from "@/lib/cookies";
 import { fromErrorToActionState, type ActionState } from "@/lib/form/forms";
-import { ticketsPath } from "@/routes";
+import { organizationsPath } from "@/routes";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -38,5 +38,5 @@ export const createOrganization = async (
   }
 
   await setCookie("toast", "Organization created successfully");
-  redirect(ticketsPath());
+  redirect(organizationsPath());
 };

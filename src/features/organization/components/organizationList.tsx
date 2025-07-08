@@ -1,3 +1,6 @@
+"use client";
+
+import SubmitButton from "@/components/form/SubmitButton";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -7,19 +10,53 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { organizationEditPath, organizationPath } from "@/routes";
+import { type InvitationStatus } from "better-auth/plugins";
 import { format } from "date-fns";
 import {
   LucideArrowLeftRight,
   LucideArrowUpRightFromSquare,
   LucidePen,
-  LucideTrash,
 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-import { getOrganizationsByUser } from "../queries/getOrganizationsByUser";
+import { switchActiveOrganization } from "../actions/switchActiveOrganization";
+import { OrganizationDeleteButton } from "./OrganizationDeleteButton";
 
-const OrganizationList = async () => {
-  const organizations = await getOrganizationsByUser();
-
+type OrganizationListProps = {
+  organizations: {
+    isActive: boolean;
+    members: {
+      id: string;
+      organizationId: string;
+      role: "user" | "admin" | "owner";
+      createdAt: Date;
+      userId: string;
+      user: {
+        email: string;
+        name: string;
+        image?: string | undefined;
+      };
+    }[];
+    invitations: {
+      id: string;
+      organizationId: string;
+      email: string;
+      role: "user" | "admin" | "owner";
+      status: InvitationStatus;
+      inviterId: string;
+      expiresAt: Date;
+    }[];
+    id: string;
+    name: string;
+    createdAt: Date;
+    slug: string;
+    logo?: string | null | undefined;
+  }[];
+};
+const OrganizationList = ({ organizations }: OrganizationListProps) => {
+  const router = useRouter();
   return (
     <Table>
       <TableHeader>
@@ -28,33 +65,49 @@ const OrganizationList = async () => {
           <TableHead>Name</TableHead>
           <TableHead>Created At</TableHead>
           <TableHead>Members</TableHead>
-          <TableHead />
+          <TableHead className="flex justify-end mr-15">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {organizations?.map((organization) => {
+          if (!organization?.slug) {
+            return null;
+          }
           const switchButton = (
-            <Button variant="outline" size="icon">
-              <LucideArrowLeftRight className="w-4 h-4" />
-            </Button>
+            <form
+              action={switchActiveOrganization.bind(null, organization.slug)}
+            >
+              <SubmitButton
+                variant={organization.isActive ? "default" : "outline"}
+                disabled={organization.isActive}
+                onSuccess={() => router.refresh()}
+                label={organization.isActive ? "Active" : "Switch"}
+                icon={<LucideArrowLeftRight className="w-4 h-4" />}
+              />
+            </form>
           );
 
           const detailButton = (
-            <Button variant="outline" size="icon">
-              <LucideArrowUpRightFromSquare className="w-4 h-4" />
+            <Button variant="outline" size="icon" asChild>
+              <Link href={organizationPath(organization.slug)}>
+                <LucideArrowUpRightFromSquare className="w-4 h-4" />
+              </Link>
             </Button>
           );
 
           const editButton = (
             <Button variant="outline" size="icon">
-              <LucidePen className="w-4 h-4" />
+              <Link href={organizationEditPath(organization.slug)}>
+                <LucidePen className="w-4 h-4" />
+              </Link>
             </Button>
           );
 
           const deleteButton = (
-            <Button variant="destructive" size="icon">
-              <LucideTrash className="w-4 h-4" />
-            </Button>
+            <OrganizationDeleteButton
+              organizationName={organization?.name}
+              organizationSlug={organization?.slug}
+            />
           );
 
           const buttons = (

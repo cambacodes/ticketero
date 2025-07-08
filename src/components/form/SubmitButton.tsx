@@ -1,6 +1,6 @@
 "use client";
 
-import { cloneElement } from "react";
+import React, { cloneElement } from "react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -11,17 +11,28 @@ export default function SubmitButton({
   label,
   icon,
   className,
+  onSuccess,
   ...props
 }: {
   label: string;
   icon?: React.ReactElement;
   className?: string;
+  onSuccess?: () => void;
 } & React.ComponentProps<typeof Button>) {
   const { pending: isPending } = useFormStatus();
+  const wasPending = React.useRef(false);
+
+  React.useEffect(() => {
+    if (wasPending.current && !isPending) {
+      onSuccess?.();
+    }
+    wasPending.current = isPending;
+  }, [isPending, onSuccess]);
+
   return (
     <Button
       type="submit"
-      disabled={isPending}
+      disabled={isPending || props.disabled}
       className={cn("gap-0", className)}
       {...props}
     >
