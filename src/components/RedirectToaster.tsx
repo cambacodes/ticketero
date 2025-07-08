@@ -2,7 +2,6 @@
 
 import React from "react";
 
-import { deleteCookie, getCookie } from "@/lib/cookies";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
 
@@ -11,14 +10,24 @@ export default function RedirectToaster() {
 
   // We are using pathname to trigger re-renders because templates are bugged
   React.useEffect(() => {
-    const handleRediectToast = async () => {
-      const message = await getCookie("toast");
-      if (message) {
-        toast.success(message);
+    const handleRedirectToast = () => {
+      const cookieString = document.cookie;
+      const match = cookieString
+        .split("; ")
+        .find((row) => row.startsWith("toast="));
+
+      if (match) {
+        const message = decodeURIComponent(match.split("=")[1] ?? "");
+        if (message) {
+          toast.success(message);
+        }
+
+        document.cookie =
+          "toast=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       }
-      await deleteCookie("toast");
     };
-    void handleRediectToast();
+
+    handleRedirectToast();
   }, [pathname]);
 
   return null;

@@ -1,24 +1,24 @@
 import React from "react";
 
-import { usePathname } from "next/navigation";
-
-import { deleteCookie, getCookie } from "../cookies";
 import { authClient } from "./auth-client";
 
 export const useAuth = () => {
   const { data, ...sessionData } = authClient.useSession();
-  const pathName = usePathname();
 
   React.useEffect(() => {
-    const handleRevalidate = async () => {
-      const shouldRevalidate = await getCookie("revalidate-auth");
-      if (shouldRevalidate) {
+    const checkRevalidate = async () => {
+      const value = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("revalidate-auth="));
+      if (value) {
         sessionData.refetch();
-        void deleteCookie("revalidate-auth");
+        document.cookie =
+          "revalidate-auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       }
     };
-    void handleRevalidate();
-  }, [sessionData, pathName]);
+
+    void checkRevalidate();
+  }, [sessionData]);
 
   return { session: data?.session, user: data?.user, ...sessionData };
 };
