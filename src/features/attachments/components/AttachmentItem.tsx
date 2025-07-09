@@ -7,6 +7,7 @@ type AttacmentItemProps = {
     ticketId: string;
     name: string;
     id: string;
+    isOwner: boolean;
   };
 };
 
@@ -17,7 +18,7 @@ export default function AttachmentItem({ attachment }: AttacmentItemProps) {
         <p className="text-sm">{attachment.name}</p>
       </Link>
 
-      <AttachmentDeleteButton id={attachment.id} />
+      {attachment.isOwner && <AttachmentDeleteButton id={attachment.id} />}
     </div>
   );
 }
