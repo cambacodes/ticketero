@@ -1,0 +1,2 @@
+ALTER TABLE "t_ticket" ADD COLUMN "organizationId" text NOT NULL;--> statement-breakpoint
+ALTER TABLE "t_ticket" ADD CONSTRAINT "t_ticket_organizationId_t_organization_id_fk" FOREIGN KEY ("organizationId") REFERENCES "public"."t_organization"("id") ON DELETE cascade ON UPDATE no action;

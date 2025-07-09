@@ -58,13 +58,13 @@ const main = async () => {
   // Create users and organizations using Drizzle but with complete Better Auth structure
   await db.transaction(async (tx) => {
     // Clean up existing data first
-    console.log("🧹 Cleaning up existing data...");
-    await tx.delete(ticket);
-    await tx.delete(invitation);
-    await tx.delete(member);
-    await tx.delete(organization);
-    await tx.delete(account);
-    await tx.delete(user);
+    // console.log("🧹 Cleaning up existing data...");
+    // await tx.delete(ticket);
+    // await tx.delete(invitation);
+    // await tx.delete(member);
+    // await tx.delete(organization);
+    // await tx.delete(account);
+    // await tx.delete(user);
 
     // Insert users
     const insertedUsers = await tx.insert(user).values(userData).returning();

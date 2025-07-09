@@ -31,7 +31,7 @@ export const upsertTicket = async (
   formData: FormData
 ) => {
   try {
-    const { user } = await getAuthSessionOrThrow();
+    const { user, session } = await getAuthSessionOrThrow();
     const data = upserTicketSchema.parse({
       id: ticketId,
       title: formData.get("title"),
@@ -53,7 +53,11 @@ export const upsertTicket = async (
         return toActionState("ERROR", "Not authorized");
       }
     } else {
-      await db.insert(ticket).values({ ...data, authorId: user.id });
+      await db.insert(ticket).values({
+        ...data,
+        authorId: user.id,
+        organizationId: session.activeOrganizationId ?? "",
+      });
     }
   } catch (e) {
     return fromErrorToActionState(e, formData);

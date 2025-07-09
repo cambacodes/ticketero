@@ -20,12 +20,14 @@ type TicketItemProps = {
   ticket: TicketWithAuthor;
   isDetail?: boolean;
   comments?: React.ReactNode;
+  attachments?: React.ReactNode;
 };
 
 export default async function TicketItem({
   ticket,
   isDetail,
   comments,
+  attachments,
 }: TicketItemProps) {
   const { user } = await getAuthSessionOrRedirect();
 
@@ -88,6 +90,7 @@ export default async function TicketItem({
           )}
         </div>
       </div>
+      {attachments}
       {comments}
     </div>
   );

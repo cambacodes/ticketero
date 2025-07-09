@@ -14,7 +14,7 @@ import {
   type AnyPgColumn,
 } from "drizzle-orm/pg-core";
 
-import { user } from "./auth-schema";
+import { organization, user } from "./auth-schema";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -52,6 +52,9 @@ export const ticket = createTable("ticket", {
   authorId: text()
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  organizationId: text()
+    .notNull()
+    .references(() => organization.id, { onDelete: "cascade" }),
 });
 
 export const comment = createTable("comment", {
@@ -77,9 +80,18 @@ export const comment = createTable("comment", {
     .$onUpdate(() => new Date()),
 });
 
+export const attachment = createTable("attachment", {
+  id: uuid().defaultRandom().primaryKey(),
+  name: varchar("name", { length: 256 }).notNull(),
+  ticketId: uuid("ticket_id")
+    .notNull()
+    .references(() => ticket.id, { onDelete: "cascade" }),
+});
+
 export const userRelations = relations(user, ({ many }) => ({
   tickets: many(ticket),
   comments: many(comment),
+  organizations: many(organization),
 }));
 
 export const ticketRelations = relations(ticket, ({ one, many }) => ({
@@ -88,6 +100,11 @@ export const ticketRelations = relations(ticket, ({ one, many }) => ({
     references: [user.id],
   }),
   comments: many(comment),
+  attachments: many(attachment),
+  organization: one(organization, {
+    fields: [ticket.organizationId],
+    references: [organization.id],
+  }),
 }));
 
 export const commentRelations = relations(comment, ({ one, many }) => ({
@@ -107,6 +124,18 @@ export const commentRelations = relations(comment, ({ one, many }) => ({
   replies: many(comment, {
     relationName: "parentComment",
   }),
+}));
+
+export const attachmentRelations = relations(attachment, ({ one }) => ({
+  ticket: one(ticket, {
+    fields: [attachment.ticketId],
+    references: [ticket.id],
+  }),
+}));
+
+export const organizationRelations = relations(organization, ({ many }) => ({
+  tickets: many(ticket),
+  users: many(user),
 }));
 
 export * from "./auth-schema";
