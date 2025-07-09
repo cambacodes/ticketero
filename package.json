@@ -10,6 +10,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "npx tsx --env-file=./.env ./src/server/db/seed.ts",
+    "db:delete": "npx tsx --env-file=.env ./src/server/db/reset.ts --delete",
     "db:reset": "npx tsx --env-file=.env ./src/server/db/reset.ts --drop",
     "dev": "next dev --turbo",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",

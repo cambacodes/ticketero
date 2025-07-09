@@ -50,6 +50,26 @@ export async function resetDatabase(
   }
 }
 
+function isDrizzleTable(obj: unknown): obj is { name: string } {
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    Object.getOwnPropertySymbols(obj).some(
+      (s) => s.toString() === "Symbol(drizzle:IsDrizzleTable)"
+    )
+  );
+}
+
+function getDrizzleTableName(table: unknown): string {
+  const symbol = Object.getOwnPropertySymbols(table).find(
+    (s) => s.toString() === "Symbol(drizzle:Name)"
+  );
+
+  return symbol && typeof (table as never)[symbol] === "string"
+    ? (table as never)[symbol]
+    : "unknown";
+}
+
 /**
  * Deletes all data from all tables without dropping the tables
  * @param db Database instance
@@ -59,22 +79,14 @@ async function deleteAllData(
   db: PostgresJsDatabase<typeof schema>,
   isDryRun = false
 ): Promise<void> {
-  // Get all tables from the schema
-  const tables = Object.values(schema).filter(
-    (item) =>
-      typeof item === "object" &&
-      item !== null &&
-      "name" in item &&
-      typeof item.name === "string"
-  );
+  const tables = Object.values(schema).filter(isDrizzleTable);
 
   console.log(`Found ${tables.length} tables to clear data from`);
 
-  // Process tables in reverse to handle dependencies
-  // This approach tries to handle foreign key constraints by starting with tables that are referenced by others
   for (const table of tables) {
     try {
-      const tableName = (table as { name: string }).name;
+      const tableName = getDrizzleTableName(table);
+
       console.log(
         `${isDryRun ? "[DRY RUN] Would delete" : "Deleting"} data from table: ${tableName}`
       );
@@ -84,11 +96,7 @@ async function deleteAllData(
         await db.delete(table as any);
       }
     } catch (error) {
-      console.error(
-        `Error with table ${(table as { name: string }).name}:`,
-        error
-      );
-      // Continue with other tables even if one fails
+      console.error("Error with table:", error);
     }
   }
 }
@@ -263,25 +271,6 @@ function parseCommandLineArgs(): {
   }
 
   return { mode, options };
-}
-
-// When running this file directly (not imported)
-// Using require.main === module equivalent for ESM
-const isDirectlyExecuted = process.argv[1] === import.meta.url.substring(7); // Remove 'file://' prefix
-
-if (isDirectlyExecuted) {
-  const result = parseCommandLineArgs();
-
-  // Only proceed if we have valid arguments (not showing help)
-  if (result) {
-    const { mode, options } = result;
-    console.log(
-      `Running database reset with mode: ${mode}, dry run: ${options.dry ? "yes" : "no"}`
-    );
-    void (async () => {
-      await resetDatabase(mode, options);
-    })();
-  }
 }
 
 if (process.argv[1] === new URL(import.meta.url).pathname) {

@@ -91,7 +91,6 @@ export const attachment = createTable("attachment", {
 export const userRelations = relations(user, ({ many }) => ({
   tickets: many(ticket),
   comments: many(comment),
-  organizations: many(organization),
 }));
 
 export const ticketRelations = relations(ticket, ({ one, many }) => ({
@@ -135,7 +134,6 @@ export const attachmentRelations = relations(attachment, ({ one }) => ({
 
 export const organizationRelations = relations(organization, ({ many }) => ({
   tickets: many(ticket),
-  users: many(user),
 }));
 
 export * from "./auth-schema";
