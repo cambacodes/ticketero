@@ -9,7 +9,7 @@ import { generateS3Key } from "../utils/generateS3Key";
 export type AttachmentDeleteFunctionSchema = {
   data: {
     name: string;
-    ticketId: string;
+    entityId: string;
     organizationId: string;
     attachmentId: string;
   };
@@ -21,14 +21,14 @@ export const attachmentDeleteEvent = inngest.createFunction(
   },
   { event: "app/attachment.delete" },
   async ({ event }) => {
-    const { attachmentId, ticketId, organizationId, name } = event.data;
+    const { attachmentId, entityId, organizationId, name } = event.data;
 
     await s3.send(
       new DeleteObjectCommand({
         Bucket: env.NEXT_PUBLIC_AWS_BUCKET_NAME,
         Key: generateS3Key({
           fileName: name,
-          ticketId,
+          entityId: entityId,
           organizationId,
           attachmentId,
         }),

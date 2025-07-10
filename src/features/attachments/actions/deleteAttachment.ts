@@ -11,13 +11,39 @@ import { revalidatePath } from "next/cache";
 
 export const deleteAttachment = async (attachmentId: string) => {
   const { user } = await getAuthSessionOrRedirect();
+
   const dbAttachment = await db.query.attachment.findFirst({
     where: eq(attachment.id, attachmentId),
     with: {
       ticket: true,
+      comment: {
+        with: {
+          ticket: true,
+        },
+      },
     },
   });
-  if (dbAttachment?.ticket.authorId !== user.id) {
+
+  if (!dbAttachment) {
+    return toActionState("ERROR", "Attachment not found");
+  }
+
+  const { entity, ticket, comment } = dbAttachment;
+
+  const isTicket = entity === "TICKET";
+
+  const entityId = isTicket ? dbAttachment.ticketId : dbAttachment.commentId;
+  const organizationId = isTicket
+    ? ticket?.organizationId
+    : comment?.ticket.organizationId;
+
+  const authorId = isTicket ? ticket?.authorId : comment?.authorId;
+
+  if (!entityId || !organizationId) {
+    return toActionState("ERROR", "Invalid attachment data");
+  }
+
+  if (authorId !== user.id) {
     return toActionState("ERROR", "Not authorized");
   }
 
@@ -34,12 +60,15 @@ export const deleteAttachment = async (attachmentId: string) => {
     name: "app/attachment.delete",
     data: {
       attachmentId,
-      ticketId: dbAttachment.ticketId,
-      organizationId: dbAttachment.ticket.organizationId,
+      entityId,
+      organizationId,
       name: dbAttachment.name,
     },
   });
 
-  revalidatePath(ticketPath(dbAttachment.ticketId));
-  return toActionState("SUCCESS", "Deleted attatcment");
+  const ticketId = (isTicket ? dbAttachment.ticketId : comment?.ticketId) ?? "";
+
+  revalidatePath(ticketPath(ticketId));
+
+  return toActionState("SUCCESS", "Deleted attachment");
 };

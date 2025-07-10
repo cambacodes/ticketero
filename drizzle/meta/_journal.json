@@ -22,6 +22,20 @@
       "when": 1752007877400,
       "tag": "0002_tan_squadron_supreme",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1752090381724,
+      "tag": "0003_fine_smiling_tiger",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1752090496331,
+      "tag": "0004_known_lord_hawal",
+      "breakpoints": true
     }
   ]
 }

@@ -4,7 +4,7 @@ import {
   parseAsString,
 } from "nuqs/server";
 
-export const shallowAndClearOnDefault = {
+export const NotShallowAndClearOnDefault = {
   shallow: false,
   clearOnDefault: true,
 };
@@ -17,14 +17,14 @@ export const searchParser = parseAsString.withDefault("").withOptions({
 export const sortParser = {
   sortKey: parseAsString
     .withDefault("createdAt")
-    .withOptions(shallowAndClearOnDefault),
+    .withOptions(NotShallowAndClearOnDefault),
   sortValue: parseAsString
     .withDefault("desc")
-    .withOptions(shallowAndClearOnDefault),
+    .withOptions(NotShallowAndClearOnDefault),
 };
 export const paginationPaser = {
-  page: parseAsInteger.withDefault(1).withOptions(shallowAndClearOnDefault),
-  size: parseAsInteger.withDefault(5).withOptions(shallowAndClearOnDefault),
+  page: parseAsInteger.withDefault(1).withOptions(NotShallowAndClearOnDefault),
+  size: parseAsInteger.withDefault(5).withOptions(NotShallowAndClearOnDefault),
 };
 export const searchParamsCache = createSearchParamsCache({
   search: searchParser,

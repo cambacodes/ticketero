@@ -10,9 +10,9 @@ import {
 } from "@/lib/form/forms";
 import { ticketPath } from "@/routes";
 import { db } from "@/server/db";
-import { attachment, ticket } from "@/server/db/schema";
+import { attachment, comment, ticket } from "@/server/db/schema";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { eq } from "drizzle-orm";
+import { eq, type InferSelectModel } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import z from "zod";
 
@@ -37,21 +37,29 @@ const createAttachmentsSchema = z.object({
 });
 
 export const createAttachments = async (
-  ticketId: string,
+  entityId: string,
+  entity: InferSelectModel<typeof attachment>["entity"],
   _actionState: ActionState,
   formData: FormData
 ) => {
-  const { user, session } = await getAuthSessionOrRedirect();
+  const { user } = await getAuthSessionOrRedirect();
 
-  const dbTicket = await db.query.ticket.findFirst({
-    where: eq(ticket.id, ticketId),
-  });
-
-  if (!dbTicket) {
+  const dbEntity =
+    entity === "TICKET"
+      ? await db.query.ticket.findFirst({
+          where: eq(ticket.id, entityId),
+        })
+      : await db.query.comment.findFirst({
+          where: eq(comment.id, entityId),
+          with: {
+            ticket: true,
+          },
+        });
+  if (!dbEntity) {
     return toActionState("ERROR", "Ticket not found");
   }
 
-  if (dbTicket.authorId !== user.id) {
+  if (dbEntity.authorId !== user.id) {
     return toActionState("ERROR", "Not authorized");
   }
 
@@ -65,7 +73,7 @@ export const createAttachments = async (
       const [dbattachment] = await db
         .insert(attachment)
         .values({
-          ticketId,
+          ticketId: entityId,
           name: file.name,
         })
         .returning();
@@ -79,8 +87,11 @@ export const createAttachments = async (
           Bucket: env.NEXT_PUBLIC_AWS_BUCKET_NAME,
           Key: generateS3Key({
             fileName: file.name,
-            ticketId,
-            organizationId: dbTicket.organizationId,
+            entityId: entityId,
+            organizationId:
+              "organizationId" in dbEntity
+                ? dbEntity.organizationId
+                : dbEntity.ticket.organizationId,
             attachmentId: dbattachment.id,
           }),
           Body: buffer,
@@ -92,7 +103,7 @@ export const createAttachments = async (
     return fromErrorToActionState(e, formData);
   }
 
-  revalidatePath(ticketPath(ticketId));
+  revalidatePath(ticketPath(entityId));
 
   return toActionState("SUCCESS", "Attachments added");
 };

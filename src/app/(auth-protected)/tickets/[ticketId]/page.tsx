@@ -36,7 +36,9 @@ export default async function TicketPage(props: { params: Params }) {
         <TicketItem
           ticket={ticket}
           isDetail
-          attachments={<Attachments ticketId={ticket.id} isOwner />}
+          attachments={
+            <Attachments entityId={ticket.id} isOwner entity="TICKET" />
+          }
           comments={
             <Comments
               ticketId={ticket.id}

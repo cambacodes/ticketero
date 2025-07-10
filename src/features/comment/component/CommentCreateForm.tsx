@@ -5,7 +5,9 @@ import { useActionState } from "react";
 import FieldError from "@/components/form/FieldError";
 import Form from "@/components/form/Form";
 import SubmitButton from "@/components/form/SubmitButton";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { ACCEPTED } from "@/features/attachments/constants";
 import { EMPTY_ACTION_STATE, type ActionState } from "@/lib/form/forms";
 
 import { createComment } from "../actions/createComment";
@@ -36,7 +38,14 @@ export default function CommentCreateForm({
         actionState={actionState}
         name="content"
       />
-
+      <Input
+        name="files"
+        id="files"
+        type="file"
+        accept={ACCEPTED.join(",")}
+        multiple
+      />
+      <FieldError actionState={actionState} name="files" />
       <SubmitButton label="Comment" />
     </Form>
   );

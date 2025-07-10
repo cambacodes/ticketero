@@ -1,19 +1,23 @@
 import CardCompact from "@/components/CardCompact";
+import type { attachment } from "@/server/db/schema";
+import type { InferSelectModel } from "drizzle-orm";
 
 import { getAttachments } from "../queries/getAttachments";
 import AttachmentCreateForm from "./AttachmentCreateForm";
 import AttachmentItem from "./AttachmentItem";
 
 type AttachmentsProps = {
-  ticketId: string;
+  entityId: string;
   isOwner: boolean;
+  entity: InferSelectModel<typeof attachment>["entity"];
 };
 
 export default async function Attachments({
-  ticketId,
+  entityId,
+  entity,
   isOwner,
 }: AttachmentsProps) {
-  const attachments = await getAttachments(ticketId);
+  const attachments = await getAttachments(entityId, entity);
   return (
     <CardCompact
       title="Attachments"
@@ -26,7 +30,9 @@ export default async function Attachments({
             ))}
           </div>
 
-          {isOwner && <AttachmentCreateForm ticketId={ticketId} />}
+          {isOwner && (
+            <AttachmentCreateForm entityId={entityId} entity={entity} />
+          )}
         </>
       }
     />

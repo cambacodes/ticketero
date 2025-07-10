@@ -1,14 +1,11 @@
+import type { attachment } from "@/server/db/schema";
+import type { InferSelectModel } from "drizzle-orm";
 import Link from "next/link";
 
 import AttachmentDeleteButton from "./AttatcmentDeleteButton";
 
 type AttacmentItemProps = {
-  attachment: {
-    ticketId: string;
-    name: string;
-    id: string;
-    isOwner: boolean;
-  };
+  attachment: InferSelectModel<typeof attachment> & { isOwner: boolean };
 };
 
 export default function AttachmentItem({ attachment }: AttacmentItemProps) {

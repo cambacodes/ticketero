@@ -7,27 +7,31 @@ import { attachment } from "@/server/db/schema";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { eq } from "drizzle-orm";
-import { type NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
+const PRESIGNED_URL_EXPIRATION = 5 * 60;
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ attachmentId: string }> }
 ) {
   await getAuthSessionOrRedirect();
   const pathParams = await params;
-  const dbAttachment = await db.query.attachment.findFirst({
-    where: eq(attachment.id, pathParams.attachmentId),
-    with: {
-      ticket: true,
-    },
-  });
+  const dbAttachment = await getAttachment(pathParams.attachmentId);
+
   if (!dbAttachment) {
     return new Response("Attachment not found", { status: 404 });
   }
+
+  const { entityId, organizationId } = resolveAttachmentContext(dbAttachment);
+
+  if (!entityId || !organizationId) {
+    return new Response("Attachment not found", { status: 404 });
+  }
+
   const filename = generateS3Key({
     fileName: dbAttachment?.name,
-    ticketId: dbAttachment?.ticketId,
-    organizationId: dbAttachment?.ticket.organizationId,
+    entityId: entityId,
+    organizationId: organizationId,
     attachmentId: dbAttachment?.id,
   });
   const presignedUrl = await getSignedUrl(
@@ -37,7 +41,7 @@ export async function GET(
       Key: filename,
       ResponseContentDisposition: `inline; filename="${dbAttachment.name}"`,
     }),
-    { expiresIn: 5 * 60 }
+    { expiresIn: PRESIGNED_URL_EXPIRATION }
   );
 
   // In case we want to stream the file
@@ -52,10 +56,43 @@ export async function GET(
   //     status: response.status,
   //   });
 
-  return new Response(null, {
+  return new NextResponse(null, {
     status: 307,
     headers: {
       Location: presignedUrl,
     },
   });
+}
+
+async function getAttachment(attachmentId: string) {
+  return await db.query.attachment.findFirst({
+    where: eq(attachment.id, attachmentId),
+    with: {
+      ticket: true,
+      comment: {
+        with: {
+          ticket: true,
+        },
+      },
+    },
+  });
+}
+
+function resolveAttachmentContext(
+  dbAttachment: NonNullable<Awaited<ReturnType<typeof getAttachment>>>
+) {
+  switch (dbAttachment.entity) {
+    case "TICKET":
+      return {
+        entityId: dbAttachment.ticketId,
+        organizationId: dbAttachment.ticket?.organizationId,
+      };
+    case "COMMENT":
+      return {
+        entityId: dbAttachment.commentId,
+        organizationId: dbAttachment.comment?.ticket.organizationId,
+      };
+    default:
+      return { entityId: undefined, organizationId: undefined };
+  }
 }

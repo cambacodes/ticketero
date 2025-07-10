@@ -32,6 +32,11 @@ export const ticketStatus = pgEnum("ticket_status", [
   "DONE",
 ]);
 
+export const attachmentEntity = pgEnum("attachment_entity", [
+  "TICKET",
+  "COMMENT",
+]);
+
 export const ticket = createTable("ticket", {
   id: uuid().defaultRandom().primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
@@ -83,9 +88,13 @@ export const comment = createTable("comment", {
 export const attachment = createTable("attachment", {
   id: uuid().defaultRandom().primaryKey(),
   name: varchar("name", { length: 256 }).notNull(),
-  ticketId: uuid("ticket_id")
-    .notNull()
-    .references(() => ticket.id, { onDelete: "cascade" }),
+  entity: attachmentEntity("entity").notNull().default("TICKET"),
+  ticketId: uuid("ticket_id").references(() => ticket.id, {
+    onDelete: "cascade",
+  }),
+  commentId: uuid("comment_id").references(() => comment.id, {
+    onDelete: "cascade",
+  }),
 });
 
 export const userRelations = relations(user, ({ many }) => ({
@@ -123,12 +132,17 @@ export const commentRelations = relations(comment, ({ one, many }) => ({
   replies: many(comment, {
     relationName: "parentComment",
   }),
+  attachments: many(attachment),
 }));
 
 export const attachmentRelations = relations(attachment, ({ one }) => ({
   ticket: one(ticket, {
     fields: [attachment.ticketId],
     references: [ticket.id],
+  }),
+  comment: one(comment, {
+    fields: [attachment.commentId],
+    references: [comment.id],
   }),
 }));
 
