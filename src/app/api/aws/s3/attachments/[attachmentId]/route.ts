@@ -29,10 +29,11 @@ export async function GET(
   }
 
   const filename = generateS3Key({
-    fileName: dbAttachment?.name,
+    fileName: dbAttachment.name,
     entityId: entityId,
+    entity: dbAttachment.entity,
     organizationId: organizationId,
-    attachmentId: dbAttachment?.id,
+    attachmentId: dbAttachment.id,
   });
   const presignedUrl = await getSignedUrl(
     s3,

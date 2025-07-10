@@ -1,9 +1,11 @@
+import { getAuthSessionOrRedirect } from "@/features/auth/actions/getAuth";
 import { db } from "@/server/db";
 import { ticket } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 
 export const getTicket = async (ticketId: string) => {
-  return await db.query.ticket.findFirst({
+  const { user } = await getAuthSessionOrRedirect();
+  const dbTicket = await db.query.ticket.findFirst({
     where: eq(ticket.id, ticketId),
     with: {
       author: {
@@ -14,4 +16,11 @@ export const getTicket = async (ticketId: string) => {
       },
     },
   });
+
+  if (!dbTicket) return undefined;
+
+  return {
+    ...dbTicket,
+    isOwner: dbTicket?.author.id === user.id,
+  };
 };

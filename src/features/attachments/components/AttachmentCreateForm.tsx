@@ -7,17 +7,23 @@ import Form from "@/components/form/Form";
 import SubmitButton from "@/components/form/SubmitButton";
 import { Input } from "@/components/ui/input";
 import { EMPTY_ACTION_STATE } from "@/lib/form/forms";
+import type { attachment } from "@/server/db/schema";
+import type { InferSelectModel } from "drizzle-orm";
 
 import { createAttachments } from "../actions/createAttachments";
 import { ACCEPTED } from "../constants";
 
-type AttachmentCreateFormProps = { ticketId: string };
+type AttachmentCreateFormProps = {
+  entityId: string;
+  entity: InferSelectModel<typeof attachment>["entity"];
+};
 
 export default function AttachmentCreateForm({
-  ticketId,
+  entityId,
+  entity,
 }: AttachmentCreateFormProps) {
   const [actionState, formAction] = useActionState(
-    createAttachments.bind(null, ticketId),
+    createAttachments.bind(null, entityId, entity),
     EMPTY_ACTION_STATE
   );
   return (

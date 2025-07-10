@@ -31,6 +31,7 @@ export const getComments = async (
       orderBy: (c, { desc }) => [desc(c.createdAt), desc(c.id)],
       limit: PAGE_SIZE + 1,
       with: {
+        attachments: true,
         author: {
           columns: {
             id: true,
@@ -39,6 +40,7 @@ export const getComments = async (
         },
         parentComment: {
           with: {
+            attachments: true,
             author: {
               columns: {
                 id: true,
@@ -49,6 +51,7 @@ export const getComments = async (
         },
         replies: {
           with: {
+            attachments: true,
             author: {
               columns: {
                 id: true,

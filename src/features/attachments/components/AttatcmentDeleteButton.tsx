@@ -17,12 +17,14 @@ export default function AttachmentDeleteButton({
   onDelete,
 }: AttachmentDeleteButtonProps) {
   const router = useRouter();
+
   return (
     <>
       <ConfirmDialog
         action={deleteAttachment.bind(null, id)}
         onSuccess={() => {
           router.refresh();
+
           onDelete?.(id);
         }}
         trigger={

@@ -61,6 +61,7 @@ export const deleteAttachment = async (attachmentId: string) => {
     data: {
       attachmentId,
       entityId,
+      entity,
       organizationId,
       name: dbAttachment.name,
     },

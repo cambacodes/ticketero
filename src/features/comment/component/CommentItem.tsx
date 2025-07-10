@@ -5,6 +5,8 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { Separator } from "@/components/ui/separator";
+import AttachmentItem from "@/features/attachments/components/AttachmentItem";
 import { format } from "date-fns";
 
 import type { CommentWithMetadata } from "../types";
@@ -13,12 +15,14 @@ type CommentItemProps = {
   comment: CommentWithMetadata;
   buttons: React.ReactNode[];
   onReply?: () => void;
+  onDeleteAttachment?: () => void;
 };
 
 export default function CommentItem({
   comment,
   buttons,
   onReply,
+  onDeleteAttachment,
 }: CommentItemProps) {
   return (
     <div className="flex gap-x-2 ml-8">
@@ -61,6 +65,20 @@ export default function CommentItem({
         <CardFooter className="w-full flex justify-end px-0">
           <Button onClick={onReply}>Reply</Button>
         </CardFooter>
+        {comment.attachments.length > 0 && (
+          <>
+            <Separator />
+            <div className="m-2 flex flex-col gap-y-2 mb-4">
+              {comment.attachments.map((attachment) => (
+                <AttachmentItem
+                  key={attachment.id}
+                  onDelete={onDeleteAttachment}
+                  attachment={{ ...attachment, isOwner: comment.isOwner }}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </Card>
 
       <div className="flex flex-col gap-y-1">{buttons}</div>

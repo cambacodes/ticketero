@@ -12,6 +12,7 @@
     "db:seed": "npx tsx --env-file=./.env ./src/server/db/seed.ts",
     "db:delete": "npx tsx --env-file=.env ./src/server/db/reset.ts --delete",
     "db:reset": "npx tsx --env-file=.env ./src/server/db/reset.ts --drop",
+    "inngest": "npx inngest-cli@latest dev",
     "dev": "next dev --turbo",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",

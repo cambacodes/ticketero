@@ -17,7 +17,6 @@ export const getAttachments = async (
   entity: "TICKET" | "COMMENT"
 ) => {
   const { user } = await getAuthSessionOrRedirect();
-
   const isTicket = entity === "TICKET";
 
   const dbAttachments = (await db.query.attachment.findMany({
@@ -34,7 +33,6 @@ export const getAttachments = async (
           },
         },
   })) as AttachmentWithAuthor[];
-
   return dbAttachments.map((att) => ({
     ...att,
     isOwner: isTicket

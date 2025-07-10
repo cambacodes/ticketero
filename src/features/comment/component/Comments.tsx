@@ -57,6 +57,7 @@ const Comments = ({ ticketId, paginatedComments }: CommentsProps) => {
         {comments?.map((comment, index) => (
           <div key={comment.id}>
             <CommentItem
+              onDeleteAttachment={async () => await handleCreateComment()}
               key={comment.id}
               comment={{ ...comment, parent: comment.parent! }}
               onReply={() => setParentIndex(index)}

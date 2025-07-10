@@ -1,4 +1,4 @@
-import type { user } from "@/server/db/schema";
+import type { attachment, user } from "@/server/db/schema";
 import { type comment } from "@/server/db/schema";
 import type { InferSelectModel } from "drizzle-orm";
 
@@ -19,4 +19,6 @@ export type CommentWithOptionalParent = BaseComment & {
 
 export type CommentWithMetadata = CommentWithOptionalParent & {
   replies: CommentWithParent[];
+} & {
+  attachments: InferSelectModel<typeof attachment>[];
 };
